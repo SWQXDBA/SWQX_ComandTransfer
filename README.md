@@ -1,6 +1,6 @@
 # SWQX_ComandTransfer
 
-A Torch plugin for converting instructions.
+A Torch plugin for converting commands.
 Sometimes we want to set some shortcut instructions.
 
 # For example

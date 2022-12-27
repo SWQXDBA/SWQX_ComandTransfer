@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Windows.Controls;
 using NLog;
 using test;
 using Torch;
 using Torch.API;
+using Torch.API.Plugins;
 
 namespace ComandTransfer
 {
-    public class CTPlugin : TorchPluginBase {
+    public class CTPlugin : TorchPluginBase,IWpfPlugin {
         private Persistent<Config> _config;
         public Config Config => _config?.Data;
         public static readonly Logger Log = LogManager.GetCurrentClassLogger();
         public static CTPlugin Static;
-        public List<MyKeyValuePair<string, string>>  Transfers => Config.TransferInfos;
+        public UserControl GetControl() => _control ??= new MainWindow(this);
+        private  MainWindow _control;
         private void SetupConfig() {
 
             var configFile = Path.Combine(StoragePath, "CommandTransfer.cfg");
@@ -44,7 +48,25 @@ namespace ComandTransfer
             base.Init(torch);
             SetupConfig();
             Static = this;
+            fixOldData();
         }
-        
+
+   
+
+        private void fixOldData()
+        {
+            foreach (var myKeyValuePair in Config.TransferInfos)
+            {
+                Convertor c = new Convertor();
+                c.From = myKeyValuePair.Key;
+                c.To = myKeyValuePair.Value;
+                if (!Config.convertors.Contains(c))
+                {
+                    Config.convertors.Add(c);
+                }
+            }
+            Config.TransferInfos.Clear();
+            this.saveConfig();
+        }
     }
 }

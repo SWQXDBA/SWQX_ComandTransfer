@@ -36,12 +36,12 @@ namespace ComandTransfer
             {
                 return;
             }
-            var myKeyValuePairs = ctPlugin.Transfers; 
-            foreach (var myKeyValuePair in myKeyValuePairs)
+            var myKeyValuePairs = ctPlugin.Config.convertors; 
+            foreach (var convertor in myKeyValuePairs)
             {
-                if (str.Contains(myKeyValuePair.Key))
+                if (str.Contains(convertor.From))
                 {
-                    str = str.Replace(myKeyValuePair.Key, myKeyValuePair.Value);
+                    str = str.Replace(convertor.From, convertor.To);
                     return;
                 }
             }

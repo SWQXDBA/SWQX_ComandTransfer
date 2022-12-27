@@ -1,0 +1,91 @@
+<UserControl 
+      x:Class="ComandTransfer.MainWindow"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:comandTransfer="clr-namespace:ComandTransfer"
+
+      mc:Ignorable="d" 
+      d:DesignHeight="1500" >
+    <UserControl.DataContext>
+        <comandTransfer:Config/>
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+
+            <ColumnDefinition Width="Auto" SharedSizeGroup="Labels"/>
+
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/> 
+            <ColumnDefinition Width="Auto" SharedSizeGroup="Buttons"/>
+
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+
+            <RowDefinition Height="Auto"/>
+
+            <RowDefinition Height="Auto"/>
+
+            <RowDefinition Height="Auto"/>
+
+            <RowDefinition Height="Auto"/>
+
+            <RowDefinition Height="Auto"/>
+
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+      
+        </Grid.RowDefinitions>
+   
+
+        <StackPanel Width="600" Grid.Column="0"  Grid.Row ="5">
+            <TextBlock Height="25" FontSize="25">
+                Command Transfer Plugin
+            </TextBlock>
+            <TextBlock >
+                updated at 2022-12-27:   
+                all commands of this plugin have removed.Please use UI.
+            </TextBlock>
+            <TextBlock Height="25" FontSize="25">
+            </TextBlock>
+            <TextBlock  >
+                Press "Enter" to add and press "delete" to remove
+            </TextBlock>
+            <!--<TextBox Text="{Binding MotdUrl}"/>-->
+            <DataGrid Width="600" AutoGenerateColumns="False" CanUserAddRows="True"  ItemsSource="{Binding convertors, UpdateSourceTrigger=PropertyChanged}" >
+                <DataGrid.Columns >
+                    <DataGridTextColumn Binding="{Binding From}" Header="sourceCommand"/>
+                    <DataGridTextColumn Binding="{Binding To}" Header="targetCommand"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            
+        </StackPanel>
+    </Grid>
+
+  
+ 
+</UserControl>

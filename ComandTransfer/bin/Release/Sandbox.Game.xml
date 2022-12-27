@@ -318,6 +318,9 @@
         <member name="T:Sandbox.Engine.Analytics.MyBannerClickEvent">
             <summary> A banner in the main menu was clicked </summary>
         </member>
+        <member name="T:Sandbox.Engine.Analytics.MyFactionJoinEvent">
+            <summary> A banner in the main menu was clicked </summary>
+        </member>
         <member name="T:Sandbox.Engine.Analytics.MyHeartbeatEvent">
             <summary> Sent periodically to report the player is online </summary>
         </member>
@@ -5970,6 +5973,56 @@
             Provides an easy method to create a MyDetectedEntityInfo struct from the detected entity and sensor owner ID
             </summary>
         </member>
+        <member name="T:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent">
+            <summary>
+            This debug component can be used to remember debug draws methods, aabbs or matrices to be drawn, even if the event occurs just once
+            and data can not be retrieved to render them in next frames.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.CheckedObjects">
+            <summary>
+            This list can be used to track down specific objects during runtime debug step -> CheckedObjects.Add(this), and change then this later to -> if (CheckedObjects.Contain(this)) Debugger.Break();
+            </summary>
+        </member>
+        <member name="E:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.OnDraw">
+            <summary>
+            Subscribe to this event debug draw callbacks for specific objects to be draw independetly
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.AABBsToDraw">
+            <summary>
+            Add your AABB and Color to draw it every update when this component is enabled
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.MatricesToDraw">
+            <summary>
+            Add your matrix to be draw every update if this component is enabled
+            </summary>
+        </member>
+        <member name="M:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.Clear">
+            <summary>
+            Clears the lists.
+            </summary>
+        </member>
+        <member name="M:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.AddMatrix(VRageMath.Matrix,VRageMath.Color)">
+            <summary>
+            Add matrix to be drawn as axes with OBB
+            </summary>
+            <param name="mat">World matrix</param>
+            <param name="col">Color</param>
+        </member>
+        <member name="M:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.AddAABB(VRageMath.BoundingBoxD,VRageMath.Color)">
+            <summary>
+            Add AABB box to be drawn
+            </summary>
+            <param name="aabb">AABB box in world coords</param>
+            <param name="col">Color</param>
+        </member>
+        <member name="M:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.BreakIfChecked(System.Object)">
+            <summary>
+            This will break the debugger, if passed object was added to MyRenderDebugInputComponent.CheckedObjects. Use for breaking in the code when you need to break at specific object.
+            </summary>        
+        </member>
         <member name="F:Sandbox.Game.GUI.HudViewers.MyHudMarkerRender.PointOfInterest.PointOfInterestType.Unknown">
             <summary>
             Used for anything unknown
@@ -6254,6 +6307,12 @@
             <param name="area">Area to search for.</param>
             <param name="list">List of object that will be returned.</param>
         </member>
+        <member name="T:Sandbox.Game.World.AdminSettingsEnum">
+            <summary>
+            Describes administrator settings
+            WARNING if you change this enum you have to change also VRage.Game.ModAPI.MyAdminSettingsEnum
+            </summary>
+        </member>
         <member name="M:Sandbox.Game.World.MyAudioComponent.TryGetSoundEmitter">
             <summary>
             Use this only for 3d one-time nonloop sounds, emitter returns to pool after the sound is played
@@ -6280,7 +6339,7 @@
             Find out whether a player blocks are supposed to be transfered to has enough free blocks to accept them
             </summary>
         </member>
-        <member name="M:Sandbox.Game.World.MyBlockLimits.SendTransferRequestMessage(Sandbox.Game.World.MyBlockLimits.MyGridLimitData,System.Int64,System.Int64,System.UInt64)">
+        <member name="M:Sandbox.Game.World.MyBlockLimits.SendTransferRequestMessage(Sandbox.Game.World.MyBlockLimits.MyGridLimitData,System.Int64)">
             <summary>
             Send a message to a player who is supposed to receive blocks built by a player
             </summary>
@@ -6488,16 +6547,6 @@
             Initializes faction collection.
             </summary>
         </member>
-        <member name="F:Sandbox.Game.World.MyUpdateCallback.m_action">
-            <summary>
-            If function returns true, then callback can be removed
-            </summary>
-        </member>
-        <member name="P:Sandbox.Game.World.MyWorldInfo.SaveDirectory">
-            <summary>
-            Directory of the save, used in DS GUI. It can be different from the SessionPath
-            </summary>
-        </member>
         <member name="M:Sandbox.Game.World.MySessionCompatHelper.ConvertBuilderToEntityBase(VRage.ObjectBuilders.MyObjectBuilder_EntityBase,System.String)">
             <summary>
             Converts the given builder to be of type EntityBase only with components. Prefix is added to sub type name for the created EntityBase and also for component builders.
@@ -6533,10 +6582,20 @@
             Determines if string array is sorted from A -> Z
             </summary>
         </member>
+        <member name="F:Sandbox.Game.World.MyUpdateCallback.m_action">
+            <summary>
+            If function returns true, then callback can be removed
+            </summary>
+        </member>
         <member name="M:Sandbox.Game.World.MyWorldGeneratorStartingStateBase.CreateAndSetPlayerFaction">
             <summary>
             Setups player faction accoring to Factions.sbc and Scenario.sbx settings. If faction is not created yet. It will be created 
             for the player with Faction.sbc settings. Faction have to accept humans.
+            </summary>
+        </member>
+        <member name="P:Sandbox.Game.World.MyWorldInfo.SaveDirectory">
+            <summary>
+            Directory of the save, used in DS GUI. It can be different from the SessionPath
             </summary>
         </member>
         <member name="M:Sandbox.Game.World.MyGodRaysProperties.InterpolateWith(Sandbox.Game.World.MyGodRaysProperties,System.Single)">
@@ -6730,7 +6789,7 @@
         <member name="M:Sandbox.Game.Weapons.MyWelder.WorldPositionChanged(System.Object)">
             <inheritdoc />
         </member>
-        <member name="M:Sandbox.Game.Weapons.MyGunBase.ShootWithOffset(VRageMath.Vector3,VRageMath.Vector3,System.Single,VRage.Game.Entity.MyEntity,Sandbox.Game.Weapons.Guns.Barrels.MyLargeBarrelBase,System.Boolean)">
+        <member name="M:Sandbox.Game.Weapons.MyGunBase.ShootWithOffset(VRageMath.Vector3,VRageMath.Vector3,System.Single,VRage.Game.Entity.MyEntity,System.Nullable{System.UInt32},System.Boolean)">
             <summary>
             This function changes default shooting position (muzzle flash) with an offset.
             (allow us to shoot at close objects)
@@ -7465,12 +7524,16 @@
             <param name="amount"></param>
             <returns></returns>
         </member>
-        <member name="M:Sandbox.Game.GameSystems.BankingAndCurrency.MyBankingSystem.RequestTransfer(System.Int64,System.Int64,System.Int64)">
+        <member name="M:Sandbox.Game.GameSystems.BankingAndCurrency.MyBankingSystem.RequestDeposit(System.Int64)">
             <summary>
             Request transfer of currency between two identifiers.
             </summary>
-            <param name="fromIdentifier">Identifier of an account to make transfer from.</param>
-            <param name="toIdentifier">Identifier of an account to make transfer to.</param>
+            <param name="amount">Amount to transfer.</param>
+        </member>
+        <member name="M:Sandbox.Game.GameSystems.BankingAndCurrency.MyBankingSystem.RequestWithdraw(System.Int64)">
+            <summary>
+            Request transfer of currency between two identifiers.
+            </summary>
             <param name="amount">Amount to transfer.</param>
         </member>
         <member name="M:Sandbox.Game.GameSystems.BankingAndCurrency.MyBankingSystem.Transfer_Server(System.Int64,System.Int64,System.Int64)">
@@ -7794,6 +7857,11 @@
         <member name="P:Sandbox.Game.GameSystems.CoordinateSystem.MyLocalCoordSys.Id">
             <summary>
             Id if this coord system
+            </summary>
+        </member>
+        <member name="M:Sandbox.Game.GameSystems.Electricity.MyBattery.UpdateOnServer100">
+            <summary>
+            Implements update of the battery - server side only
             </summary>
         </member>
         <member name="F:Sandbox.Game.GameSystems.IntergridCommunication.MyMessageListener.m_invokeOverride">
@@ -8486,14 +8554,6 @@
             <param name="outPlayer2"></param>
             <returns>True if trade is possible.</returns>
         </member>
-        <member name="M:Sandbox.Game.Multiplayer.MySyncDestructions.RemoveFracturedPiecesRequest(System.UInt64,VRageMath.Vector3D,System.Single)">
-            <summary>
-            WARNING: OLD METHOD. Do not use. use MyDecaySystem now.
-            </summary>
-            <param name="userId"></param>
-            <param name="center"></param>
-            <param name="radius"></param>
-        </member>
         <member name="F:Sandbox.Game.Multiplayer.MyFactionCollection.AddFactionMsg.FactionId">
             <summary>
             Do not use this for request, this value is always generated by server!
@@ -8715,16 +8775,6 @@
             Shortcut class for various multiplayer things
             </summary>
         </member>
-        <member name="T:Sandbox.Game.Gui.MyAIDebugInputComponent">
-            <summary>
-            AI Debug Input class (based on Cestmir's Debug Input)
-            </summary>
-        </member>
-        <member name="M:Sandbox.Game.Gui.MyAIDebugInputComponent.GetTargetPosition">
-            <summary>
-            Obtain position where the player is aiming/looking at.
-            </summary>
-        </member>
         <member name="M:Sandbox.Game.Gui.MyGuiBlueprintScreen_Reworked.SelectButton(Sandbox.Game.Screens.Helpers.MyGuiControlContentButton,System.Int32,System.Boolean,System.Boolean)">
             <summary>
             
@@ -8911,6 +8961,11 @@
             <param name="treshold"></param>
             <returns></returns>
         </member>
+        <member name="T:Sandbox.Game.Gui.MyGuiScreenDebugBase">
+            <summary>
+            Abstract class (screen) for all debug / developer screens
+            </summary>
+        </member>
         <member name="M:Sandbox.Game.Gui.MyGuiScreenDebugDeveloper.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:Sandbox.Game.Gui.MyGuiScreenDebugDeveloper"/> class.
@@ -8941,22 +8996,11 @@
             Send SM settings back to requester
             </summary>
         </member>
-        <member name="M:Sandbox.Game.Gui.MyGuiScreenAdminMenu.RequestEntityList(Sandbox.Game.Entities.MyEntityList.MyEntityTypeEnum)">
-            <summary>
-            This method will only work with MyGuiScreenSafeZoneFilter.
-            </summary>
-            <param name="myEntityTypeEnum"></param>
-        </member>
         <member name="M:Sandbox.Game.Gui.MyGuiScreenAdminMenu.DownloadSettingFromServer(Sandbox.Game.Gui.MyGuiScreenAdminMenu.AdminSettings)">
             <summary>
             Catch response on SM settings. Save them and show SM.
             </summary>
             <param name="settings"></param>
-        </member>
-        <member name="M:Sandbox.Game.Gui.MyGuiScreenAdminMenu.ValidatePlayer">
-            <summary>
-            Use only on RPC calls.
-            </summary>
         </member>
         <member name="M:Sandbox.Game.Gui.MyGuiScreenAdminMenu.SelectNextCharacter">
             <summary>
@@ -13209,7 +13253,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_Reactor">
             <summary>
-            Reactors generate high amounts of power at the cost of refined uranium ingots.     Uranium is one of the rarest elements and cannot be found on planets. Uranium can be found in asteroids, and in some craters left by meteorite impacts. 
+            Reactors generate high amounts of power at the cost of refined uranium ingots. Uranium is one of the rarest elements and cannot be found on planets. Uranium can be found in asteroids, and in some craters left by meteorite impacts. 
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_Refinery">
@@ -20030,6 +20074,71 @@
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_TeleportHereToolTip">
             <summary>
             Teleports your character to the spectator camera.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_Player">
+            <summary>
+            Player
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_Date">
+            <summary>
+            Date
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_Cheaters">
+            <summary>
+            Cheaters
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_KickPlayer">
+            <summary>
+            Kick player
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_KickPlayerTooltip">
+            <summary>
+            Kicks player. Player may return in some time.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_BanPlayer">
+            <summary>
+            Ban player
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_BanPlayerTooltip">
+            <summary>
+            Ban player. Player no longer may join server
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_UnbanPlayer">
+            <summary>
+            Unban player
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_UnbanPlayerTooltip">
+            <summary>
+            Unban player. Player no longer may join server
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_Refresh">
+            <summary>
+            Refresh
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_Clear">
+            <summary>
+            Clear selected
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_ClearAll">
+            <summary>
+            Clear all
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_CheaterRowTooltip">
+            <summary>
+            Reason: {0} Happened at: {1}
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_TimeOfDay">
@@ -27717,9 +27826,9 @@
             Decoration #2
             </summary>
         </member>
-        <member name="F:Sandbox.Game.Localization.MySpaceTexts.RadialMenuGroupTitle_WindowsAndHitech">
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.RadialMenuGroupTitle_Windows">
             <summary>
-            Windows &amp; Hi-tech
+            Windows
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.RadialMenuGroupTitle_AdvancedSystems">
@@ -28315,6 +28424,11 @@
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.TradeScreenPopupCancel">
             <summary>
             Player canceled the trade.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.TradeScreenPopupCancelMissingItems">
+            <summary>
+            Player is missing items for trade. Trade canceled.
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.TradeScreenPopupDead">
@@ -35799,7 +35913,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_Searchlight">
             <summary>
-            Searchlights are articulated Spotlights that can target nearby grids and can be used as cameras.
+            Searchlights are articulated spotlights that can target nearby grids and can be used as cameras.
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_Searchlight">
@@ -36082,6 +36196,341 @@
             Asteroid Armory
             </summary>
         </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_2x1RailingLeft">
+            <summary>
+            Railing 2x1 Left
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_2x1RailingRight">
+            <summary>
+            Railing 2x1 Right
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeT">
+            <summary>
+            Conveyor Tube T Junction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeTSmall">
+            <summary>
+            Small Conveyor Tube T Junction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_RailingCenter">
+            <summary>
+            Railing Center
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorPipeT">
+            <summary>
+            Conveyor Pipe T Junction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfCoverWallMirror">
+            <summary>
+            Half Cover Wall Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfGratedCatwalk">
+            <summary>
+            Half Grated Catwalk
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfGratedCatwalkCenterRailing">
+            <summary>
+            Half Grated Catwalk Center Railing
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfGratedCatwalkRailing">
+            <summary>
+            Half Grated Catwalk Straight
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfGratedCatwalkOuterRailing">
+            <summary>
+            Half Grated Catwalk Railing
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AdvancedRotor3x3">
+            <summary>
+            Advanced Rotor 3x3
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AdvancedRotorPart3x3">
+            <summary>
+            Advanced Rotor Part 3x3
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_DeskChairlessCornerInv">
+            <summary>
+            Chairless Desk Corner Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_DeskCornerInv">
+            <summary>
+            Desk Corner Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_NeonTubesCircle">
+            <summary>
+            Neon Tubes Circle
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_NeonTubesT">
+            <summary>
+            Neon Tubes T Shape
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorConverter">
+            <summary>
+            Conveyor Converter
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LadderShaft">
+            <summary>
+            Ladder Shaft
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_EngineerPlushie">
+            <summary>
+            An advanced motivational device of pristine quality.  Can not be crafted or disassembled.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_EngineerPlushie">
+            <summary>
+            Engineer Plushie
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfWindowDiagonal">
+            <summary>
+            Half Window Diagonal
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfWindowRound">
+            <summary>
+            Half Window Round
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeDuct">
+            <summary>
+            Reinforced Conveyor Tube
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeDuctSmall">
+            <summary>
+            Small Reinforced Conveyor Tube
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_BlockGroup_RoundWindows">
+            <summary>
+            Round Windows
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRound">
+            <summary>
+            Round Window
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundCorner">
+            <summary>
+            Round Window Corner
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundCornerInv">
+            <summary>
+            Round Window Corner Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundFace">
+            <summary>
+            Round Window Face
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundFaceInv">
+            <summary>
+            Round Window Face Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundInv">
+            <summary>
+            Round Window Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundInwardsCorner">
+            <summary>
+            Round Window Inwards Corner
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundInwardsCornerInv">
+            <summary>
+            Round Window Inwards Corner Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenVictory_Draw">
+            <summary>
+            Draw
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_BridgeWindow1x1FaceInverted">
+            <summary>
+            Bridge Window Face Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSlopeTransitionBase">
+            <summary>
+            Heavy Armor Slope Transition Base
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSlopeTransitionBaseMirrored">
+            <summary>
+            Heavy Armor Slope Transition Base Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSlopeTransitionTip">
+            <summary>
+            Heavy Armor Slope Transition Tip
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSlopeTransitionTipMirrored">
+            <summary>
+            Heavy Armor Slope Transition Tip Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSquareSlopedCornerBase">
+            <summary>
+            Heavy Armor Square Sloped Corner Base
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSquareSlopedCornerTip">
+            <summary>
+            Heavy Armor Square Sloped Corner Tip
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorRaisedSlopedCorner">
+            <summary>
+            Heavy Armor Raised Sloped Corner
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSlopeTransition">
+            <summary>
+            Heavy Armor Slope Transition
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSlopeTransitionMirrored">
+            <summary>
+            Heavy Armor Slope Transition Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavytArmorSquareSlopedCornerTip">
+            <summary>
+            Heavy Armor Square Sloped Corner Tip Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorRaisedSlopedCorner">
+            <summary>
+            Light Armor Raised Sloped Corner
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSlopeTransition">
+            <summary>
+            Light Armor Slope Transition
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSlopeTransitionBase">
+            <summary>
+            Light Armor Slope Transition Base
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSlopeTransitionBaseMirrored">
+            <summary>
+            Light Armor Slope Transition Base Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSlopeTransitionMirrored">
+            <summary>
+            Light Armor Slope Transition Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSlopeTransitionTip">
+            <summary>
+            Light Armor Slope Transition Tip
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSlopeTransitionTipMirrored">
+            <summary>
+            Light Armor Slope Transition Tip Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSquareSlopedCornerBase">
+            <summary>
+            Light Armor Square Sloped Corner Base
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSquareSlopedCornerTip">
+            <summary>
+            Light Armor Square Sloped Corner Tip
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSquareSlopedCornerTipInv">
+            <summary>
+            Light Armor Square Sloped Corner Tip Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSquareSlopedCornerTipInv">
+            <summary>
+            Heavy Armor Square Sloped Corner Tip Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.RadialMenuGroupTitle_Decoration5">
+            <summary>
+            Decoration #5
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_Uncraftable">
+            <summary>
+            Non-craftable
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ChatAntiSpam_OnTimeoutNotification">
+            <summary>
+            You are still on spam timeout, message cannot be sent.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ChatAntiSpam_SameMessageNotification">
+            <summary>
+            You tried sending the same message within a short amount of time. Message not sent.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ChatAntiSpam_SpamMessageNotification">
+            <summary>
+            You have been put on timeout for spamming. Message not sent.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeDuctCurved">
+            <summary>
+            Reinforced Curved Conveyor Tube
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeDuctSmallCurved">
+            <summary>
+            Small Reinforced Curved Conveyor Tube
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeDuctSmallT">
+            <summary>
+            Small Reinforced Conveyor Tube T Junction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeDuctT">
+            <summary>
+            Reinforced Conveyor Tube T Junction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.RadialMenuGroupTitle_Hitech">
+            <summary>
+            Hi-tech
+            </summary>
+        </member>
         <member name="M:Sandbox.Game.MyCampaignManager.Init">
             <summary>
             Loads campaign data to storage. 
@@ -36361,38 +36810,6 @@
             <summary>
             Responsible for synchronizing entity physics over network
             </summary>
-        </member>
-        <member name="F:Sandbox.Game.Replication.StateGroups.MyEntityInventoryStateGroup.m_messagePartsProcessed">
-            <summary>
-            Collection of all message parts that has arrived and were processed.
-            </summary>
-        </member>
-        <member name="F:Sandbox.Game.Replication.StateGroups.MyEntityInventoryStateGroup.m_messagePartsBlocked">
-            <summary>
-            Collection of message parts that have been processed or must not be processed (either their parent or descendant arrived).
-            </summary>
-        </member>
-        <member name="M:Sandbox.Game.Replication.StateGroups.MyEntityInventoryStateGroup.IsMessageFinishedRecursive(System.Byte,System.Byte)">
-            <summary>
-            Search recursively for children. If both children arrived, set higher level to cache it.
-            </summary>
-            <param name="id"></param>
-            <param name="lastId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Sandbox.Game.Replication.StateGroups.MyEntityInventoryStateGroup.AddMessagePartBlock(System.Byte)">
-            <summary>
-            Add subId to blocked and block all it's parents (if message was processed, parents mut not be, as they overlap)
-            </summary>
-            <param name="id"></param>
-        </member>
-        <member name="M:Sandbox.Game.Replication.StateGroups.MyEntityInventoryStateGroup.CanProcessMessagePart(System.Byte)">
-            <summary>
-            Decide whether message with subid can be processed. 
-            SubId must not be processed if it is blocked (that means that a child subId was already added) or any parent was added (would overlap with this)
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
         </member>
         <member name="T:Sandbox.Game.Replication.StateGroups.MyEntityPhysicsStateGroup">
             <summary>
@@ -37022,56 +37439,6 @@
             Attribute tells the terminal system which interface types
             should be linked to this class.
             </summary>
-        </member>
-        <member name="T:Sandbox.Common.MyRenderDebugInputComponent">
-            <summary>
-            This debug component can be used to remember debug draws methods, aabbs or matrices to be drawn, even if the event occurs just once
-            and data can not be retrieved to render them in next frames.
-            </summary>
-        </member>
-        <member name="F:Sandbox.Common.MyRenderDebugInputComponent.CheckedObjects">
-            <summary>
-            This list can be used to track down specific objects during runtime debug step -> CheckedObjects.Add(this), and change then this later to -> if (CheckedObjects.Contain(this)) Debugger.Break();
-            </summary>
-        </member>
-        <member name="E:Sandbox.Common.MyRenderDebugInputComponent.OnDraw">
-            <summary>
-            Subscribe to this event debug draw callbacks for specific objects to be draw independetly
-            </summary>
-        </member>
-        <member name="F:Sandbox.Common.MyRenderDebugInputComponent.AABBsToDraw">
-            <summary>
-            Add your AABB and Color to draw it every update when this component is enabled
-            </summary>
-        </member>
-        <member name="F:Sandbox.Common.MyRenderDebugInputComponent.MatricesToDraw">
-            <summary>
-            Add your matrix to be draw every update if this component is enabled
-            </summary>
-        </member>
-        <member name="M:Sandbox.Common.MyRenderDebugInputComponent.Clear">
-            <summary>
-            Clears the lists.
-            </summary>
-        </member>
-        <member name="M:Sandbox.Common.MyRenderDebugInputComponent.AddMatrix(VRageMath.Matrix,VRageMath.Color)">
-            <summary>
-            Add matrix to be drawn as axes with OBB
-            </summary>
-            <param name="mat">World matrix</param>
-            <param name="col">Color</param>
-        </member>
-        <member name="M:Sandbox.Common.MyRenderDebugInputComponent.AddAABB(VRageMath.BoundingBoxD,VRageMath.Color)">
-            <summary>
-            Add AABB box to be drawn
-            </summary>
-            <param name="aabb">AABB box in world coords</param>
-            <param name="col">Color</param>
-        </member>
-        <member name="M:Sandbox.Common.MyRenderDebugInputComponent.BreakIfChecked(System.Object)">
-            <summary>
-            This will break the debugger, if passed object was added to MyRenderDebugInputComponent.CheckedObjects. Use for breaking in the code when you need to break at specific object.
-            </summary>        
         </member>
         <member name="T:Sandbox.MyCommonProgramStartup">
             <summary>

@@ -318,8 +318,17 @@
         <member name="T:Sandbox.Engine.Analytics.MyBannerClickEvent">
             <summary> A banner in the main menu was clicked </summary>
         </member>
+        <member name="T:Sandbox.Engine.Analytics.MyFactionJoinEvent">
+            <summary> A banner in the main menu was clicked </summary>
+        </member>
         <member name="T:Sandbox.Engine.Analytics.MyHeartbeatEvent">
             <summary> Sent periodically to report the player is online </summary>
+        </member>
+        <member name="T:Sandbox.Engine.Analytics.MyObjectiveCompletedEvent">
+            <summary> A banner in the main menu was clicked </summary>
+        </member>
+        <member name="T:Sandbox.Engine.Analytics.MyPublishedBlueprintEvent">
+            <summary> A banner in the main menu was clicked </summary>
         </member>
         <member name="T:Sandbox.Engine.Analytics.MySessionEndEvent">
             <summary> The game is being terminated or user logged off <para />
@@ -1339,6 +1348,21 @@
             MULTIPLAYER RELATED FAKES
             </summary>
         </member>
+        <member name="F:Sandbox.Engine.Utils.MyFakes.OFFENSIVEBLOCK_INTERCEPT_MAX_SIMULATIONS">
+            <summary>
+            Limits max simulations. Affects performance. Lower values - better simulation. 
+            </summary>
+        </member>
+        <member name="F:Sandbox.Engine.Utils.MyFakes.OFFENSIVEBLOCK_INTERCEPT_ALLOWED_DEVIATION">
+            <summary>
+            Desired precision for interception. Higher values - better simulation
+            </summary>
+        </member>
+        <member name="F:Sandbox.Engine.Utils.MyFakes.ENABLE_ORCA">
+            <summary>
+            Optimal Reciprocal Collision Avoidance feature
+            </summary>
+        </member>
         <member name="P:Sandbox.Engine.Utils.MyFpsManager.FrameTime">
             <summary>
             Returns update + render time of last frame in ms
@@ -2047,6 +2071,11 @@
             Changes the state to an idle state sensing danger
             </summary>
         </member>
+        <member name="F:Sandbox.Game.AI.CollisionAvoidance.MyPathFindingAvoidance.PATHFINDING_DISTANCE_PRECISION_MULTIPLIER">
+            <summary>
+            This is multiplier so that autopilot does not have to be that precise when avoiding collision with pathfinding
+            </summary>
+        </member>
         <member name="P:Sandbox.Game.AI.Navigation.MyBotNavigation.ForwardVector">
             <summary>
             Current wanted forward vector
@@ -2248,6 +2277,11 @@
         <member name="T:Sandbox.Game.AI.Pathfinding.IMyPathfindingLog">
             <summary>
             For BW compatibility only to allow separation of Cestmir's pathfinding
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.AI.Pathfinding.MyOctreeGenerator.MIN_SIZE_FOR_GENERATOR">
+            <summary>
+            Min size for this generator (exclusive)
             </summary>
         </member>
         <member name="M:Sandbox.Game.AI.Pathfinding.Obsolete.MyGridNavigationMesh.FindPath(VRageMath.Vector3,VRageMath.Vector3)">
@@ -4572,6 +4606,11 @@
             Gets or sets is generated, used for economy stations
             </summary>
         </member>
+        <member name="E:Sandbox.Game.Entities.MyCubeGrid.OnMaxThrustChanged">
+            <summary>
+            May be called from parallel thread 
+            </summary>
+        </member>
         <member name="E:Sandbox.Game.Entities.MyCubeGrid.OnGridMerge">
             <summary>
             Called, when 2 grids are merged with merge block. First grid - grid that will stay, second - will be merged into first, and deleted.
@@ -4607,6 +4646,14 @@
             Event triggered, when one of GridLinkTypeEnum connections changed. Used to determine changes in connections. Use may also need react to OnGridMerge/OnGridSplit
             </summary>
         </member>
+        <member name="E:Sandbox.Game.Entities.MyCubeGrid.OnConnectionChangeCompleted">
+            <summary>
+            Event triggered, when one of GridLinkTypeEnum connections changed. Used to determine changes in connections. Use may also need react to OnGridMerge/OnGridSplit
+            Event different from OnConnectivityChanged. 
+            1) It is called when all group changes
+            2) It is called AFTER all group changes, so GetConnectedGrids returning correct results
+            </summary>
+        </member>
         <member name="M:Sandbox.Game.Entities.MyCubeGrid.IsConnectedTo(Sandbox.Game.Entities.MyCubeGrid,VRage.Game.ModAPI.GridLinkTypeEnum)">
             <summary>
             Checks if 2 grids are connected
@@ -4617,11 +4664,18 @@
         </member>
         <member name="M:Sandbox.Game.Entities.MyCubeGrid.GetConnectedGrids(VRage.Game.ModAPI.GridLinkTypeEnum,System.Collections.Generic.List{Sandbox.Game.Entities.MyCubeGrid})">
             <summary>
-            Get all connected grids to current grid
+            Get all grids connected to this grid
             </summary>
             <param name="type">Type of connection</param>
             <param name="list">Cache list, you can keep it null, then new List will be allocated</param>
             <returns></returns>
+        </member>
+        <member name="M:Sandbox.Game.Entities.MyCubeGrid.GetConnectedGrids(VRage.Game.ModAPI.GridLinkTypeEnum,System.Action{Sandbox.Game.Entities.MyCubeGrid})">
+            <summary>
+            Iterate over all grids connected to this grid
+            </summary>
+            <param name="type">Type of connection</param>
+            <param name="action">Action would be called per each connected grid</param>
         </member>
         <member name="M:Sandbox.Game.Entities.MyCubeGrid.TryReduceGroupControl">
             <summary>
@@ -4684,25 +4738,23 @@
             <param name="builderEntityId"></param>
             <param name="user"></param>
         </member>
-        <member name="M:Sandbox.Game.Entities.MyCubeGrid.ColorBlocks(VRageMath.Vector3I,VRageMath.Vector3I,VRageMath.Vector3,System.Boolean,System.Boolean)">
+        <member name="M:Sandbox.Game.Entities.MyCubeGrid.ColorBlocks(VRageMath.Vector3I,VRageMath.Vector3I,VRageMath.Vector3,System.Boolean)">
             <summary>
             Color block in area. Verry slow.
             </summary>
             <param name="min"></param>
             <param name="max"></param>
             <param name="newHSV"></param>
-            <param name="playSound"></param>
-            <param name="validateOwnership"></param>
+            <param name="playSound"></param>        
         </member>
-        <member name="M:Sandbox.Game.Entities.MyCubeGrid.SkinBlocks(VRageMath.Vector3I,VRageMath.Vector3I,System.Nullable{VRageMath.Vector3},System.Nullable{VRage.Utils.MyStringHash},System.Boolean,System.Boolean)">
+        <member name="M:Sandbox.Game.Entities.MyCubeGrid.SkinBlocks(VRageMath.Vector3I,VRageMath.Vector3I,System.Nullable{VRageMath.Vector3},System.Nullable{VRage.Utils.MyStringHash},System.Boolean)">
             <summary>
             Skin block in area. Verry slow.
             </summary>
             <param name="min"></param>
             <param name="max"></param>
             <param name="newSkin"></param>
-            <param name="playSound"></param>
-            <param name="validateOwnership"></param>
+            <param name="playSound"></param>        
             <param name="newHSV"></param>
         </member>
         <member name="M:Sandbox.Game.Entities.MyCubeGrid.BuildBlock(Sandbox.Definitions.MyCubeBlockDefinition,VRageMath.Vector3,VRage.Utils.MyStringHash,VRageMath.Vector3I,VRageMath.Quaternion,System.Int64,System.Int64,VRage.Game.Entity.MyEntity,VRage.Game.MyObjectBuilder_CubeBlock,System.Boolean,System.Boolean,System.Boolean,System.String)">
@@ -4870,11 +4922,6 @@
         <member name="M:Sandbox.Game.Entities.MyCubeGrid.GetBlocksInMultiBlock(System.Int32,System.Collections.Generic.HashSet{System.Tuple{Sandbox.Game.Entities.Cube.MySlimBlock,System.Nullable{System.UInt16}}})">
             <summary>
             Writes multiblocks (compound block and block ID) to outMultiBlocks collection with the same multiblockId.
-            </summary>
-        </member>
-        <member name="M:Sandbox.Game.Entities.MyCubeGrid.BuildMultiBlocks(Sandbox.Game.Entities.Cube.MyCubeGridMultiBlockInfo,VRageMath.MatrixI@,System.Collections.Generic.List{System.Int32},System.Int64,VRage.Utils.MyStringHash)">
-            <summary>
-            Builds multiblock parts according to specified indices. 
             </summary>
         </member>
         <member name="M:Sandbox.Game.Entities.MyCubeGrid.CanAddOtherBlockInMultiBlock(VRageMath.Vector3I,VRageMath.Vector3I,VRageMath.MyBlockOrientation,Sandbox.Definitions.MyCubeBlockDefinition,System.Nullable{System.Int32})">
@@ -5351,26 +5398,6 @@
             <param name="action"></param>
             <param name="debugName"></param>
         </member>
-        <member name="M:Sandbox.Game.Entities.IMyControllableEntity.BeginShoot(VRage.Game.ModAPI.MyShootActionEnum)">
-            <summary>
-            This will be called locally to start shooting with the given action
-            </summary>
-        </member>
-        <member name="M:Sandbox.Game.Entities.IMyControllableEntity.EndShoot(VRage.Game.ModAPI.MyShootActionEnum)">
-            <summary>
-            This will be called locally to start shooting with the given action
-            </summary>
-        </member>
-        <member name="M:Sandbox.Game.Entities.IMyControllableEntity.OnBeginShoot(VRage.Game.ModAPI.MyShootActionEnum)">
-            <summary>
-            This will be called back from the sync object both on local and remote clients
-            </summary>
-        </member>
-        <member name="M:Sandbox.Game.Entities.IMyControllableEntity.OnEndShoot(VRage.Game.ModAPI.MyShootActionEnum)">
-            <summary>
-            This will be called back from the sync object both on local and remote clients
-            </summary>
-        </member>
         <member name="P:Sandbox.Game.Entities.Interfaces.IMyGasTank.GasCapacity">
             <summary>
             Gets the gas capacity of this tank.
@@ -5389,6 +5416,26 @@
         <member name="M:Sandbox.Game.Entities.Interfaces.IMyGasTank.IsResourceStorage(VRage.Game.MyDefinitionId)">
             <summary>
             Can the gas tank store a specified resource?
+            </summary>
+        </member>
+        <member name="M:Sandbox.Game.Entities.IMyControllableEntity.BeginShoot(VRage.Game.ModAPI.MyShootActionEnum)">
+            <summary>
+            This will be called locally to start shooting with the given action
+            </summary>
+        </member>
+        <member name="M:Sandbox.Game.Entities.IMyControllableEntity.EndShoot(VRage.Game.ModAPI.MyShootActionEnum)">
+            <summary>
+            This will be called locally to start shooting with the given action
+            </summary>
+        </member>
+        <member name="M:Sandbox.Game.Entities.IMyControllableEntity.OnBeginShoot(VRage.Game.ModAPI.MyShootActionEnum)">
+            <summary>
+            This will be called back from the sync object both on local and remote clients
+            </summary>
+        </member>
+        <member name="M:Sandbox.Game.Entities.IMyControllableEntity.OnEndShoot(VRage.Game.ModAPI.MyShootActionEnum)">
+            <summary>
+            This will be called back from the sync object both on local and remote clients
             </summary>
         </member>
         <member name="P:Sandbox.Game.Entities.IMyGunBaseUser.AmmoInventory">
@@ -5699,9 +5746,12 @@
             </summary>
         </member>
         <member name="M:Sandbox.Game.Entities.MyGamePruningStructure.GetClosestPlanet(VRageMath.Vector3D)">
-            Get the closest planet overlapping a position.
-            
+            <summary>
+            Get the closest planet overlapping a position.          
             This will not return anything if the position is not within the bounding box of the planet.
+            </summary>
+            <param name="position">position</param>
+            <returns></returns>
         </member>
         <member name="P:Sandbox.Game.Entities.MyHandToolBase.NeedsShootDirectionWhileAiming">
             <inheritdoc />
@@ -5926,6 +5976,32 @@
         <member name="M:Sandbox.Game.Entities.Planet.MyPlanetCubemapHelper.TranslateTexcoordsToFace(VRageMath.Vector2D@,System.Int32,System.Int32,VRageMath.Vector2D@)">
             Translate texcoords from one face to the next.
         </member>
+        <member name="M:Sandbox.Game.Entities.Planet.MyPlanets.GetPointOnPlanetAboveSurfaceInSphere(VRageMath.Vector3D,VRageMath.Vector3D,System.Single,System.Single,System.Single,System.Boolean,System.Int32,System.Int32,System.Single,System.Single,System.Int32,System.Func{VRageMath.Vector3D,System.Boolean})">
+            <summary>
+            Find point on planet, that is higher than <paramref name="minHeightAboveTerrain"/>.
+            Distance to that point should be between <paramref name="minRadius"/> and <paramref name="maxRadius"/>
+            
+            Function inside, iterate 0-<paramref name="circlePoints"/>> points, around <paramref name="sphereCenter"/> and then
+            iterate from <paramref name="minDistanceInCircle"/> to <paramref name="maxRadius"/>
+            
+            After <paramref name="maxAttempts"/> checks, it return null
+            </summary>
+            <param name="fromPosition">Current position in world coordinates, of ship. Needed to test points most closest to that postiion</param>
+            <param name="sphereCenter">Around this position in world coordinates, function would try find points</param>
+            <param name="minRadius">Minimum distance from result point, to <paramref name="sphereCenter"/></param>
+            <param name="maxRadius">Maximum distance from result point, to <paramref name="sphereCenter"/></param>
+            <param name="minDistanceInCircle">Should be more than 0, and less <paramref name="maxRadius"/></param>
+            <param name="fullyRandom">When true after first checks it randomize next circle angle</param>
+            <param name="circlePoints">Amount of angle switches total available</param>
+            <param name="stepsPerAngle">Amount of distance checks per circle angle</param>
+            <param name="offsetInRadians">Use 0, to check first closest point to <paramref name="fromPosition"/></param>
+            <param name="minHeightAboveTerrain">Minimal height above planet surface</param>
+            <param name="maxAttempts">Maximum checks allowed. Recommended value less 120</param>
+            <param name="extraCheck">When function is null or return true, it would return it as result</param>
+            <returns>Point in world coordinates, that is between <paramref name="minRadius"/> and <paramref name="maxRadius"/>,
+            and distance from it to surface is more that <paramref name="minHeightAboveTerrain"/>, or null
+            </returns>
+        </member>
         <member name="T:Sandbox.Game.Entities.UseObject.IMyUsableEntity">
             <summary>
             Simple interface for entities so they don't have to implement IMyUseObject.
@@ -5969,6 +6045,56 @@
             <summary>
             Provides an easy method to create a MyDetectedEntityInfo struct from the detected entity and sensor owner ID
             </summary>
+        </member>
+        <member name="T:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent">
+            <summary>
+            This debug component can be used to remember debug draws methods, aabbs or matrices to be drawn, even if the event occurs just once
+            and data can not be retrieved to render them in next frames.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.CheckedObjects">
+            <summary>
+            This list can be used to track down specific objects during runtime debug step -> CheckedObjects.Add(this), and change then this later to -> if (CheckedObjects.Contain(this)) Debugger.Break();
+            </summary>
+        </member>
+        <member name="E:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.OnDraw">
+            <summary>
+            Subscribe to this event debug draw callbacks for specific objects to be draw independetly
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.AABBsToDraw">
+            <summary>
+            Add your AABB and Color to draw it every update when this component is enabled
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.MatricesToDraw">
+            <summary>
+            Add your matrix to be draw every update if this component is enabled
+            </summary>
+        </member>
+        <member name="M:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.Clear">
+            <summary>
+            Clears the lists.
+            </summary>
+        </member>
+        <member name="M:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.AddMatrix(VRageMath.Matrix,VRageMath.Color)">
+            <summary>
+            Add matrix to be drawn as axes with OBB
+            </summary>
+            <param name="mat">World matrix</param>
+            <param name="col">Color</param>
+        </member>
+        <member name="M:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.AddAABB(VRageMath.BoundingBoxD,VRageMath.Color)">
+            <summary>
+            Add AABB box to be drawn
+            </summary>
+            <param name="aabb">AABB box in world coords</param>
+            <param name="col">Color</param>
+        </member>
+        <member name="M:Sandbox.Game.GUI.DebugInputComponents.MyRenderDebugInputComponent.BreakIfChecked(System.Object)">
+            <summary>
+            This will break the debugger, if passed object was added to MyRenderDebugInputComponent.CheckedObjects. Use for breaking in the code when you need to break at specific object.
+            </summary>        
         </member>
         <member name="F:Sandbox.Game.GUI.HudViewers.MyHudMarkerRender.PointOfInterest.PointOfInterestType.Unknown">
             <summary>
@@ -6064,11 +6190,12 @@
             </summary>
             <param name="entity">MyEntity that this POI is for</param>
         </member>
-        <member name="M:Sandbox.Game.GUI.HudViewers.MyHudMarkerRender.PointOfInterest.SetText(System.Text.StringBuilder)">
+        <member name="M:Sandbox.Game.GUI.HudViewers.MyHudMarkerRender.PointOfInterest.SetText(System.Text.StringBuilder,System.Boolean)">
             <summary>
             Sets the text message for this POI, limited to MaxTextLength characters.
             </summary>
             <param name="text">The text message to set, limited to MaxTextLength characters.</param>
+            <param name="ingoreMaxTextLenght">Sets current renderer to ignore max lengt.</param>
         </member>
         <member name="M:Sandbox.Game.GUI.HudViewers.MyHudMarkerRender.PointOfInterest.SetText(System.String)">
             <summary>
@@ -6254,6 +6381,12 @@
             <param name="area">Area to search for.</param>
             <param name="list">List of object that will be returned.</param>
         </member>
+        <member name="T:Sandbox.Game.World.AdminSettingsEnum">
+            <summary>
+            Describes administrator settings
+            WARNING if you change this enum you have to change also VRage.Game.ModAPI.MyAdminSettingsEnum
+            </summary>
+        </member>
         <member name="M:Sandbox.Game.World.MyAudioComponent.TryGetSoundEmitter">
             <summary>
             Use this only for 3d one-time nonloop sounds, emitter returns to pool after the sound is played
@@ -6280,7 +6413,7 @@
             Find out whether a player blocks are supposed to be transfered to has enough free blocks to accept them
             </summary>
         </member>
-        <member name="M:Sandbox.Game.World.MyBlockLimits.SendTransferRequestMessage(Sandbox.Game.World.MyBlockLimits.MyGridLimitData,System.Int64,System.Int64,System.UInt64)">
+        <member name="M:Sandbox.Game.World.MyBlockLimits.SendTransferRequestMessage(Sandbox.Game.World.MyBlockLimits.MyGridLimitData,System.Int64)">
             <summary>
             Send a message to a player who is supposed to receive blocks built by a player
             </summary>
@@ -6488,16 +6621,6 @@
             Initializes faction collection.
             </summary>
         </member>
-        <member name="F:Sandbox.Game.World.MyUpdateCallback.m_action">
-            <summary>
-            If function returns true, then callback can be removed
-            </summary>
-        </member>
-        <member name="P:Sandbox.Game.World.MyWorldInfo.SaveDirectory">
-            <summary>
-            Directory of the save, used in DS GUI. It can be different from the SessionPath
-            </summary>
-        </member>
         <member name="M:Sandbox.Game.World.MySessionCompatHelper.ConvertBuilderToEntityBase(VRage.ObjectBuilders.MyObjectBuilder_EntityBase,System.String)">
             <summary>
             Converts the given builder to be of type EntityBase only with components. Prefix is added to sub type name for the created EntityBase and also for component builders.
@@ -6533,10 +6656,20 @@
             Determines if string array is sorted from A -> Z
             </summary>
         </member>
+        <member name="F:Sandbox.Game.World.MyUpdateCallback.m_action">
+            <summary>
+            If function returns true, then callback can be removed
+            </summary>
+        </member>
         <member name="M:Sandbox.Game.World.MyWorldGeneratorStartingStateBase.CreateAndSetPlayerFaction">
             <summary>
             Setups player faction accoring to Factions.sbc and Scenario.sbx settings. If faction is not created yet. It will be created 
             for the player with Faction.sbc settings. Faction have to accept humans.
+            </summary>
+        </member>
+        <member name="P:Sandbox.Game.World.MyWorldInfo.SaveDirectory">
+            <summary>
+            Directory of the save, used in DS GUI. It can be different from the SessionPath
             </summary>
         </member>
         <member name="M:Sandbox.Game.World.MyGodRaysProperties.InterpolateWith(Sandbox.Game.World.MyGodRaysProperties,System.Single)">
@@ -6657,6 +6790,12 @@
         <member name="P:Sandbox.Game.Weapons.MyLargeTurretBase.UpdateFlags">
             <inheritdoc />
         </member>
+        <member name="M:Sandbox.Game.Weapons.MyLargeTurretBase.FocusTargetResult(Sandbox.Game.Entities.Interfaces.TargetFocusResult)">
+            <summary>
+            Server side always
+            </summary>
+            <param name="result">Result of targeting</param>
+        </member>
         <member name="F:Sandbox.Game.Weapons.MyShipDrill.ShipDrillId">
             <summary>
             Id of this drill in the parent ship.
@@ -6730,7 +6869,7 @@
         <member name="M:Sandbox.Game.Weapons.MyWelder.WorldPositionChanged(System.Object)">
             <inheritdoc />
         </member>
-        <member name="M:Sandbox.Game.Weapons.MyGunBase.ShootWithOffset(VRageMath.Vector3,VRageMath.Vector3,System.Single,VRage.Game.Entity.MyEntity,Sandbox.Game.Weapons.Guns.Barrels.MyLargeBarrelBase,System.Boolean)">
+        <member name="M:Sandbox.Game.Weapons.MyGunBase.ShootWithOffset(VRageMath.Vector3,VRageMath.Vector3,System.Single,VRage.Game.Entity.MyEntity,System.Nullable{System.UInt32},System.Boolean)">
             <summary>
             This function changes default shooting position (muzzle flash) with an offset.
             (allow us to shoot at close objects)
@@ -6770,9 +6909,9 @@
             <summary>
             Returns best potential target. Also stored all potential targets into given list. 
             </summary>
-            <param name="rangeSq"></param>
-            <param name="shootingRangeSq"></param>
-            <param name="outPotentialTargets"></param>
+            <param name="aiRangeSq">AI range (squared)</param>
+            <param name="shootRangeSq">Max shoot distance (squared)</param>
+            <param name="outPotentialTargets">Buffer list</param>
             <returns></returns>
         </member>
         <member name="M:Sandbox.Game.Weapons.MyMissile.OnAddedToScene(System.Object)">
@@ -6784,6 +6923,12 @@
         <member name="M:Sandbox.Game.Weapons.MyMissile.UpdateBeforeSimulation">
             <summary>
             Updates resource.
+            </summary>
+        </member>
+        <member name="M:Sandbox.Game.Weapons.MyMissile.HitRicochet(System.Collections.Generic.List{VRageMath.MyLineSegmentOverlapResult{VRage.Game.Entity.MyEntity}},VRageMath.Vector3D)">
+            <summary>
+            Applies damage for a ricochet by finding the first block that is hit and dealing
+            the configured ricochet damage to it.
             </summary>
         </member>
         <member name="M:Sandbox.Game.Weapons.MyMissile.Closing">
@@ -6822,10 +6967,28 @@
              Or draw if this is last draw of this projectile (useful for short-distance shots).
             </summary>
         </member>
-        <member name="M:Sandbox.Game.Weapons.MyProjectiles.UpdateBeforeSimulation">
+        <member name="M:Sandbox.Game.Weapons.MyProjectiles.UpdateAfterSimulation">
             <summary>
              Update active projectiles. If projectile dies/timeouts, remove it from the list.
             </summary>
+        </member>
+        <member name="T:Sandbox.Game.Weapons.MyVisibilityHelper">
+            <summary>
+            Describes class that allows you to know if there is something between 2 points
+            </summary>
+        </member>
+        <member name="M:Sandbox.Game.Weapons.MyVisibilityHelper.IsPhysicallyVisible(VRageMath.Vector3D,VRageMath.Vector3D,VRage.Game.Entity.MyEntity,VRage.Game.Entity.MyEntity,Sandbox.Game.Weapons.MyLargeTurretTargetingSystem.MyTargetingOption,System.Int32,System.Collections.Generic.ICollection{System.Int64},System.Action{VRage.Game.Entity.MyEntity,System.Boolean})">
+            <summary>
+            Returns true, when there is a nothing between <paramref name="from"/> and <paramref name="to"/>, except ignored entities
+            </summary>
+            <param name="from">From world coordinates</param>
+            <param name="to">To world coordinates</param>
+            <param name="m_targetReceiver">From entity</param>
+            <param name="target">To entity</param>
+            <param name="m_raycastMode">Mode of raycast</param>
+            <param name="collisionLayer">Collion layer of raycast, <see cref="T:Sandbox.Engine.Physics.MyPhysics.CollisionLayers"/></param>
+            <param name="raycastIgnoredEntities">EntityIds of ignored entities</param>
+            <param name="callback">Action that would called from parralel thread, as a result callback</param>
         </member>
         <member name="M:Sandbox.Game.Weapons.MyWeaponPrediction.GetPredictedTargetPosition(Sandbox.Game.Weapons.MyGunBase,VRage.Game.Entity.MyEntity,VRage.Game.Entity.MyEntity,VRageMath.Vector3D@,System.Single@,System.Single)">
             <summary>
@@ -7005,6 +7168,26 @@
             <param name="intersection"></param>
             <returns></returns>
         </member>
+        <member name="F:Sandbox.Game.EntityComponents.MyAutopilotComponent.m_maxPitchAngle">
+            <summary>
+            In radians
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.EntityComponents.MyAutopilotComponent.m_maxRollAngle">
+            <summary>
+            In radians
+            </summary>
+        </member>
+        <member name="P:Sandbox.Game.EntityComponents.MyAutopilotComponent.IsUsingCollisionAvoidance">
+            <summary>
+            Must be used in GUI Only
+            </summary>
+        </member>
+        <member name="P:Sandbox.Game.EntityComponents.MyAutopilotComponent.IsUsingCollisionAvoidanceForLogic">
+            <summary>
+            Must be used in logic
+            </summary>
+        </member>
         <member name="T:Sandbox.Game.EntityComponents.MyCasterComponent">
             <summary>
             Component used for finding object by casting. It is possible to create this component with different types of casting:
@@ -7144,6 +7327,11 @@
         <member name="M:Sandbox.Game.EntityComponents.MyGridOwnershipComponentBase.GetBlockOwnerId(Sandbox.Game.Entities.Cube.MySlimBlock)">
             <summary>
             Returns the identity id of the block's owner
+            </summary>
+        </member>
+        <member name="T:Sandbox.Game.EntityComponents.MyGridTargeting.GridGroupTracker">
+            <summary>
+            Tracks changes in connections of provided grids
             </summary>
         </member>
         <member name="M:Sandbox.Game.EntityComponents.MyModelComponent.InitEntity">
@@ -7465,12 +7653,16 @@
             <param name="amount"></param>
             <returns></returns>
         </member>
-        <member name="M:Sandbox.Game.GameSystems.BankingAndCurrency.MyBankingSystem.RequestTransfer(System.Int64,System.Int64,System.Int64)">
+        <member name="M:Sandbox.Game.GameSystems.BankingAndCurrency.MyBankingSystem.RequestDeposit(System.Int64)">
             <summary>
             Request transfer of currency between two identifiers.
             </summary>
-            <param name="fromIdentifier">Identifier of an account to make transfer from.</param>
-            <param name="toIdentifier">Identifier of an account to make transfer to.</param>
+            <param name="amount">Amount to transfer.</param>
+        </member>
+        <member name="M:Sandbox.Game.GameSystems.BankingAndCurrency.MyBankingSystem.RequestWithdraw(System.Int64)">
+            <summary>
+            Request transfer of currency between two identifiers.
+            </summary>
             <param name="amount">Amount to transfer.</param>
         </member>
         <member name="M:Sandbox.Game.GameSystems.BankingAndCurrency.MyBankingSystem.Transfer_Server(System.Int64,System.Int64,System.Int64)">
@@ -7796,8 +7988,30 @@
             Id if this coord system
             </summary>
         </member>
+        <member name="M:Sandbox.Game.GameSystems.Electricity.MyBattery.UpdateOnServer100">
+            <summary>
+            Implements update of the battery - server side only
+            </summary>
+        </member>
         <member name="F:Sandbox.Game.GameSystems.IntergridCommunication.MyMessageListener.m_invokeOverride">
             Used for unit tests
+        </member>
+        <member name="E:Sandbox.Game.GameSystems.MyAiBlockSystem.MovementBlockMaxSpeedChanged">
+            <summary>
+            May be called from paralell thread
+            </summary>
+        </member>
+        <member name="E:Sandbox.Game.GameSystems.MyAiBlockSystem.MovementBlockMaxForwardAccelerationChanged">
+            <summary>
+            May be called from paralell thread
+            </summary>
+        </member>
+        <member name="M:Sandbox.Game.GameSystems.MyAiBlockSystem.SetCombatState(System.Boolean)">
+            <summary>
+            Implements combat state. Combat state disables any mission type, but does not remove it from the active components. 
+            It's activated back, when combat state ends.
+            </summary>
+            <param name="value">state value</param>
         </member>
         <member name="T:Sandbox.Game.GameSystems.MyDamageSystem">
             <summary>
@@ -8077,6 +8291,11 @@
         </member>
         <member name="P:Sandbox.Game.GameSystems.MyGridJumpDriveSystem.Queue">
             <inheritdoc />
+        </member>
+        <member name="F:Sandbox.Game.GameSystems.MyGridLockingSystem.m_lockedBy">
+            <summary>
+            key - PlayerIdentity, or block.EntityId, value - topMostGrid
+            </summary>
         </member>
         <member name="E:Sandbox.Game.GameSystems.MyGridTerminalSystem.GroupAdded">
             <summary>
@@ -8486,14 +8705,6 @@
             <param name="outPlayer2"></param>
             <returns>True if trade is possible.</returns>
         </member>
-        <member name="M:Sandbox.Game.Multiplayer.MySyncDestructions.RemoveFracturedPiecesRequest(System.UInt64,VRageMath.Vector3D,System.Single)">
-            <summary>
-            WARNING: OLD METHOD. Do not use. use MyDecaySystem now.
-            </summary>
-            <param name="userId"></param>
-            <param name="center"></param>
-            <param name="radius"></param>
-        </member>
         <member name="F:Sandbox.Game.Multiplayer.MyFactionCollection.AddFactionMsg.FactionId">
             <summary>
             Do not use this for request, this value is always generated by server!
@@ -8715,16 +8926,6 @@
             Shortcut class for various multiplayer things
             </summary>
         </member>
-        <member name="T:Sandbox.Game.Gui.MyAIDebugInputComponent">
-            <summary>
-            AI Debug Input class (based on Cestmir's Debug Input)
-            </summary>
-        </member>
-        <member name="M:Sandbox.Game.Gui.MyAIDebugInputComponent.GetTargetPosition">
-            <summary>
-            Obtain position where the player is aiming/looking at.
-            </summary>
-        </member>
         <member name="M:Sandbox.Game.Gui.MyGuiBlueprintScreen_Reworked.SelectButton(Sandbox.Game.Screens.Helpers.MyGuiControlContentButton,System.Int32,System.Boolean,System.Boolean)">
             <summary>
             
@@ -8911,6 +9112,11 @@
             <param name="treshold"></param>
             <returns></returns>
         </member>
+        <member name="T:Sandbox.Game.Gui.MyGuiScreenDebugBase">
+            <summary>
+            Abstract class (screen) for all debug / developer screens
+            </summary>
+        </member>
         <member name="M:Sandbox.Game.Gui.MyGuiScreenDebugDeveloper.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:Sandbox.Game.Gui.MyGuiScreenDebugDeveloper"/> class.
@@ -8941,22 +9147,11 @@
             Send SM settings back to requester
             </summary>
         </member>
-        <member name="M:Sandbox.Game.Gui.MyGuiScreenAdminMenu.RequestEntityList(Sandbox.Game.Entities.MyEntityList.MyEntityTypeEnum)">
-            <summary>
-            This method will only work with MyGuiScreenSafeZoneFilter.
-            </summary>
-            <param name="myEntityTypeEnum"></param>
-        </member>
         <member name="M:Sandbox.Game.Gui.MyGuiScreenAdminMenu.DownloadSettingFromServer(Sandbox.Game.Gui.MyGuiScreenAdminMenu.AdminSettings)">
             <summary>
             Catch response on SM settings. Save them and show SM.
             </summary>
             <param name="settings"></param>
-        </member>
-        <member name="M:Sandbox.Game.Gui.MyGuiScreenAdminMenu.ValidatePlayer">
-            <summary>
-            Use only on RPC calls.
-            </summary>
         </member>
         <member name="M:Sandbox.Game.Gui.MyGuiScreenAdminMenu.SelectNextCharacter">
             <summary>
@@ -10054,7 +10249,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockActionTooltip_WaypointReset">
             <summary>
-            Resets current waypoint to first position
+            Sets the first waypoint to be the current target waypoint.
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockAction_ConveyorSorterBlacklist">
@@ -11024,7 +11219,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_LargeTurretTargetMissiles">
             <summary>
-            Target missiles
+            Target rockets
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_LargeTurretTargetMoving">
@@ -13017,6 +13212,11 @@
             The ejector allows small items to be ejected from small ships. Can also be used to access inventories.  You can use the ejector together with the conveyor sorter to collect and throw out specific items. 
             </summary>
         </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_EventController">
+            <summary>
+            Event Controllers trigger actions based on grid or block conditions.
+            </summary>
+        </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_FlightSeat">
             <summary>
             Flight seats are used to control a large ship and access all of its functions. 
@@ -13084,7 +13284,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_InteriorTurret">
             <summary>
-            Autonomous anti-personnel turret. Must be manually loaded with MR-50A magazines.  Maximum range: 600 m
+            Autonomous anti-personnel turret. Must be manually loaded with MR-50A Rifle Magazines.  Maximum range: 800 m
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_InteriorWall">
@@ -13129,7 +13329,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_MissileTurret">
             <summary>
-            Slow-shooting, explosive damage dealing, missile launcher that can be loaded through conveyors. Uses Missiles.  Maximum range: 800 m
+            Slow-shooting, explosive damage dealing, rocket launcher that can be loaded through conveyors. Uses Rockets.  Maximum range: 800 m
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_ProductivityModule">
@@ -13209,7 +13409,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_Reactor">
             <summary>
-            Reactors generate high amounts of power at the cost of refined uranium ingots.     Uranium is one of the rarest elements and cannot be found on planets. Uranium can be found in asteroids, and in some craters left by meteorite impacts. 
+            Reactors generate high amounts of power at the cost of refined uranium ingots. Uranium is one of the rarest elements and cannot be found on planets. Uranium can be found in asteroids, and in some craters left by meteorite impacts. 
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_Refinery">
@@ -13224,7 +13424,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_RocketLauncherReload">
             <summary>
-            An advanced version of the rocket launcher, capable of using the conveyor system to automatically reload. Uses Missiles.  Maximum range: 800 m
+            An advanced version of the rocket launcher, capable of using the conveyor system to automatically reload. Uses Rockets.  Maximum range: 800 m
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_RemoteControl">
@@ -13234,7 +13434,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_RocketLauncher">
             <summary>
-            Slow-shooting, explosive damage dealing, rocket launcher that must be loaded manually. Uses Missiles.  Maximum range: 800 m
+            Slow-shooting, explosive damage dealing, rocket launcher that must be loaded manually. Uses Rockets.  Maximum range: 800 m
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_Rotor">
@@ -13854,7 +14054,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConnectorSmall">
             <summary>
-            Ejector
+            Small Connector
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_Construction_Components_Assembler">
@@ -13990,6 +14190,11 @@
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_Electronics_Assembler">
             <summary>
             Electronics Assembler
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_EventController">
+            <summary>
+            Event Controller
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_FighterCockpit">
@@ -14694,7 +14899,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_MissileTurret">
             <summary>
-            Missile Turret
+            Rocket Turret
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_OpenCockpitLarge">
@@ -15172,6 +15377,11 @@
             Solids
             </summary>
         </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_CargoFilledEntityComponent">
+            <summary>
+            Cargo Filled %
+            </summary>
+        </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Category_AllBlocks">
             <summary>
             All Blocks
@@ -15369,7 +15579,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_AutomaticRifle">
             <summary>
-            MR-20
+            MR-20 Rifle
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_BulletproofGlass">
@@ -15414,7 +15624,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_EliteAutomaticRifle">
             <summary>
-            MR-30E
+            MR-30E Rifle
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_Explosives">
@@ -15529,7 +15739,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_Missile200mm">
             <summary>
-            Missile
+            Rocket
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_Motor">
@@ -15599,7 +15809,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_PreciseAutomaticRifle">
             <summary>
-            MR-8P
+            MR-8P Rifle
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_RadioCommunicationComponents">
@@ -15609,7 +15819,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_RapidFireAutomaticRifle">
             <summary>
-            MR-50A
+            MR-50A Rifle
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_ReactorComponents">
@@ -15769,7 +15979,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Rifle">
             <summary>
-            MR-20
+            MR-20 Rifle
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Scenario_2Planets">
@@ -17709,7 +17919,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.NotificationArgMissile">
             <summary>
-            Missile
+            Rocket
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.NotificationArgProjectile">
@@ -20032,6 +20242,71 @@
             Teleports your character to the spectator camera.
             </summary>
         </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_Player">
+            <summary>
+            Player
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_Date">
+            <summary>
+            Date
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_Cheaters">
+            <summary>
+            Cheaters
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_KickPlayer">
+            <summary>
+            Kick player
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_KickPlayerTooltip">
+            <summary>
+            Kicks player. Player may return in some time.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_BanPlayer">
+            <summary>
+            Ban player
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_BanPlayerTooltip">
+            <summary>
+            Ban player. Player no longer may join server
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_UnbanPlayer">
+            <summary>
+            Unban player
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_UnbanPlayerTooltip">
+            <summary>
+            Unban player. Player no longer may join server
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_Refresh">
+            <summary>
+            Refresh
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_Clear">
+            <summary>
+            Clear selected
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_ClearAll">
+            <summary>
+            Clear all
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_CheaterRowTooltip">
+            <summary>
+            Reason: {0} Happened at: {1}
+            </summary>
+        </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenDebugAdminMenu_TimeOfDay">
             <summary>
             Time of day offset:
@@ -21692,6 +21967,16 @@
             Show center of mass
             </summary>
         </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.TerminalTab_Info_ShowAIfunctions">
+            <summary>
+            Show AI functions
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.TerminalTab_Info_ShowAIfunctionsTooltip">
+            <summary>
+            Shows nearby AI blocks’ helper UI functions
+            </summary>
+        </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.TerminalTab_Info_ShowMassCenter_ToolTip">
             <summary>
             Draw center of mass of each grid
@@ -21959,7 +22244,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.ToolTipItemFilter_Missile200mm">
             <summary>
-            Missile 200 mm
+            Rocket 200 mm
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.ToolTipItemFilter_NATO_25x184mm">
@@ -22807,6 +23092,11 @@
             Enables weapons and explosives.
             </summary>
         </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ToolTipWorldSettingsEnableSpaceSuitRespawn">
+            <summary>
+            Enables Space Suit Respawn.
+            </summary>
+        </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.ToolTipWorldSettings_AdaptiveSimulationQuality">
             <summary>
             Enables quality reduction of deformations and explosions affecting voxels in case the CPU is on fire.
@@ -22934,7 +23224,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.TooltipWorldSettings_EnableTurrerFriendlyDamage">
             <summary>
-            Enables explosion damage from missiles being applied to its own grid.
+            Enables explosion damage from rockets being applied to its own grid.
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.ToolTipWorldSettings_EnableVoxelDestruction">
@@ -23419,7 +23709,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.WorldSettings_EnableTurrerFriendlyDamage">
             <summary>
-            Enable friendly missile damage
+            Enable friendly rocket damage
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.WorldSettings_EnableVoxelDestruction">
@@ -23435,6 +23725,11 @@
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.WorldSettings_EnableWeapons">
             <summary>
             Weapons enabled
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.WorldSettings_EnableSpaceSuitRespawn">
+            <summary>
+            Enable Space Suit Respawn
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.WorldSettings_EnableWolfs">
@@ -24834,7 +25129,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_FAQ_Damage">
             <summary>
-            Damage can be inflicted by using weapons like missile launchers or gatling turrets or hand held rifles. Grids can also be damaged by impacts with other grids or voxels. 
+            Damage can be inflicted by using weapons like rocket launchers or gatling turrets or hand held rifles. Grids can also be damaged by impacts with other grids or voxels. 
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_FAQ_Repair">
@@ -27717,9 +28012,9 @@
             Decoration #2
             </summary>
         </member>
-        <member name="F:Sandbox.Game.Localization.MySpaceTexts.RadialMenuGroupTitle_WindowsAndHitech">
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.RadialMenuGroupTitle_Windows">
             <summary>
-            Windows &amp; Hi-tech
+            Windows
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.RadialMenuGroupTitle_AdvancedSystems">
@@ -28092,6 +28387,11 @@
             Planets are not supported on this platform
             </summary>
         </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Notification_PlanetsTooBig">
+            <summary>
+            Planet is too big
+            </summary>
+        </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Notification_PlanetNotWhitelisted">
             <summary>
             New planet of type {0} would exceed limits of this scenario
@@ -28315,6 +28615,11 @@
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.TradeScreenPopupCancel">
             <summary>
             Player canceled the trade.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.TradeScreenPopupCancelMissingItems">
+            <summary>
+            Player is missing items for trade. Trade canceled.
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.TradeScreenPopupDead">
@@ -34489,12 +34794,12 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_SemiAutoPistol">
             <summary>
-            S-10
+            S-10 Pistol
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_SemiAutoPistolMagazine">
             <summary>
-            S-10 Magazine
+            S-10 Pistol Magazine
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_FireCover">
@@ -34584,22 +34889,22 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_AutomaticRifleGun_Mag_20rd">
             <summary>
-            MR-20 Magazine
+            MR-20 Rifle Magazine
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_PreciseAutomaticRifleGun_Mag_5rd">
             <summary>
-            MR-8P Magazine
+            MR-8P Rifle Magazine
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_RapidFireAutomaticRifleGun_Mag_50rd">
             <summary>
-            MR-50A Magazine
+            MR-50A Rifle Magazine
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_UltimateAutomaticRifleGun_Mag_30rd">
             <summary>
-            MR-30E Magazine
+            MR-30E Rifle Magazine
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_BasicHandHeldLauncher">
@@ -34609,7 +34914,7 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_BasicHandHeldLauncher">
             <summary>
-            RO-1
+            RO-1 Rocket Launcher
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_AdvancedHandHeldLauncher">
@@ -34629,17 +34934,17 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_AdvancedHandHeldLauncher">
             <summary>
-            PRO-1
+            PRO-1 Rocket Launcher
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_ElitePistol">
             <summary>
-            S-10E
+            S-10E Pistol
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_FullAutoPistol">
             <summary>
-            S-20A
+            S-20A Pistol
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.WarfareCounter_TimeRemaining">
@@ -34759,12 +35064,12 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_ElitePistolMagazine">
             <summary>
-            S-10E Magazine
+            S-10E Pistol Magazine
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_FullAutoPistolMagazine">
             <summary>
-            S-20A Magazine
+            S-20A Pistol Magazine
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_InteriorTurret_Mag_100rd">
@@ -35642,6 +35947,21 @@
             Warfare Rocket Launcher
             </summary>
         </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockActionTitle_LargeTurretFocusLockedTarget">
+            <summary>
+            Focus Locked Target
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockActionTooltip_LargeTurretFocusLockedTarget">
+            <summary>
+            Prioritize locked target while target lock is maintained
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Notification_TargetOutOfRange">
+            <summary>
+            {0} Turret(s) have insufficient range
+            </summary>
+        </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockActionTitle_LargeTurretCopyTarget">
             <summary>
             Copy target
@@ -35797,9 +36117,14 @@
             Half Sliding Hatch Door
             </summary>
         </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_MaintenancePanel">
+            <summary>
+            Maintenance Panel
+            </summary>
+        </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_Searchlight">
             <summary>
-            Searchlights are articulated Spotlights that can target nearby grids and can be used as cameras.
+            Searchlights are articulated spotlights that can target nearby grids and can be used as cameras.
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_Searchlight">
@@ -35947,6 +36272,16 @@
             Weapons:  
             </summary>
         </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_SunTracking">
+            <summary>
+            Always aim at sun
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_SunTracking">
+            <summary>
+            Makes the turret attempt to aim at the sun position and disables other AI features. Useful for solar collectors.
+            </summary>
+        </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_EnableAI">
             <summary>
             Enable AI
@@ -36074,12 +36409,2337 @@
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_LargeRocketLauncher">
             <summary>
-            A bigger version of the rocket launcher, capable of using the conveyor system to automatically reload. Uses Missiles.  Maximum range: 800 m
+            A bigger version of the rocket launcher, capable of using the conveyor system to automatically reload. Uses Rockets.  Maximum range: 800 m
             </summary>
         </member>
         <member name="F:Sandbox.Game.Localization.MySpaceTexts.CustomWorld_AsteroidArmory">
             <summary>
             Asteroid Armory
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_2x1RailingLeft">
+            <summary>
+            Railing 2x1 Left
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_2x1RailingRight">
+            <summary>
+            Railing 2x1 Right
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeT">
+            <summary>
+            Conveyor Tube T Junction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeTSmall">
+            <summary>
+            Small Conveyor Tube T Junction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_RailingCenter">
+            <summary>
+            Railing Center
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorPipeT">
+            <summary>
+            Conveyor Pipe T Junction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfCoverWallMirror">
+            <summary>
+            Half Cover Wall Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfGratedCatwalk">
+            <summary>
+            Half Grated Catwalk
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfGratedCatwalkCenterRailing">
+            <summary>
+            Half Grated Catwalk Center Railing
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfGratedCatwalkRailing">
+            <summary>
+            Half Grated Catwalk Straight
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfGratedCatwalkOuterRailing">
+            <summary>
+            Half Grated Catwalk Railing
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AdvancedRotor3x3">
+            <summary>
+            Advanced Rotor 3x3
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AdvancedRotorPart3x3">
+            <summary>
+            Advanced Rotor Part 3x3
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_DeskChairlessCornerInv">
+            <summary>
+            Chairless Desk Corner Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_DeskCornerInv">
+            <summary>
+            Desk Corner Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_NeonTubesCircle">
+            <summary>
+            Neon Tubes Circle
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_NeonTubesT">
+            <summary>
+            Neon Tubes T Shape
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorConverter">
+            <summary>
+            Conveyor Converter
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LadderShaft">
+            <summary>
+            Ladder Shaft
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_EngineerPlushie">
+            <summary>
+            An advanced motivational device of pristine quality.  Can not be crafted or disassembled.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_EngineerPlushie">
+            <summary>
+            Engineer Plushie
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfWindowDiagonal">
+            <summary>
+            Half Window Diagonal
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfWindowRound">
+            <summary>
+            Half Window Round
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AirVentFull">
+            <summary>
+            Air Vent Full
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeDuct">
+            <summary>
+            Reinforced Conveyor Tube
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeDuctSmall">
+            <summary>
+            Small Reinforced Conveyor Tube
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_BlockGroup_RoundWindows">
+            <summary>
+            Round Windows
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRound">
+            <summary>
+            Round Window
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundCorner">
+            <summary>
+            Round Window Corner
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundCornerInv">
+            <summary>
+            Round Window Corner Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundFace">
+            <summary>
+            Round Window Face
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundFaceInv">
+            <summary>
+            Round Window Face Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundInv">
+            <summary>
+            Round Window Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundInwardsCorner">
+            <summary>
+            Round Window Inwards Corner
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WindowRoundInwardsCornerInv">
+            <summary>
+            Round Window Inwards Corner Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ScreenVictory_Draw">
+            <summary>
+            Draw
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ArmorCenterPanelHeavy">
+            <summary>
+            Heavy Armor Centered Panel
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ArmorCenterPanelLight">
+            <summary>
+            Light Armor Centered Panel
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ArmorHalfCenterPanelHeavy">
+            <summary>
+            Heavy Armor Centered Half Panel
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ArmorHalfCenterPanelLight">
+            <summary>
+            Light Armor Centered Half Panel
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_BridgeWindow1x1FaceInverted">
+            <summary>
+            Bridge Window Face Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSlopeTransitionBase">
+            <summary>
+            Heavy Armor Slope Transition Base
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSlopeTransitionBaseMirrored">
+            <summary>
+            Heavy Armor Slope Transition Base Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSlopeTransitionTip">
+            <summary>
+            Heavy Armor Slope Transition Tip
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSlopeTransitionTipMirrored">
+            <summary>
+            Heavy Armor Slope Transition Tip Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSquareSlopedCornerBase">
+            <summary>
+            Heavy Armor Square Sloped Corner Base
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSquareSlopedCornerTip">
+            <summary>
+            Heavy Armor Square Sloped Corner Tip
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorRaisedSlopedCorner">
+            <summary>
+            Heavy Armor Raised Sloped Corner
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSlopeTransition">
+            <summary>
+            Heavy Armor Slope Transition
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSlopeTransitionMirrored">
+            <summary>
+            Heavy Armor Slope Transition Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavytArmorSquareSlopedCornerTip">
+            <summary>
+            Heavy Armor Square Sloped Corner Tip Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorRaisedSlopedCorner">
+            <summary>
+            Light Armor Raised Sloped Corner
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSlopeTransition">
+            <summary>
+            Light Armor Slope Transition
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSlopeTransitionBase">
+            <summary>
+            Light Armor Slope Transition Base
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSlopeTransitionBaseMirrored">
+            <summary>
+            Light Armor Slope Transition Base Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSlopeTransitionMirrored">
+            <summary>
+            Light Armor Slope Transition Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSlopeTransitionTip">
+            <summary>
+            Light Armor Slope Transition Tip
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSlopeTransitionTipMirrored">
+            <summary>
+            Light Armor Slope Transition Tip Mirrored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSquareSlopedCornerBase">
+            <summary>
+            Light Armor Square Sloped Corner Base
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSquareSlopedCornerTip">
+            <summary>
+            Light Armor Square Sloped Corner Tip
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_LightArmorSquareSlopedCornerTipInv">
+            <summary>
+            Light Armor Square Sloped Corner Tip Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HeavyArmorSquareSlopedCornerTipInv">
+            <summary>
+            Heavy Armor Square Sloped Corner Tip Inv.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.RadialMenuGroupTitle_Decoration5">
+            <summary>
+            Decoration #5
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Item_Uncraftable">
+            <summary>
+            Non-craftable
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ChatAntiSpam_OnTimeoutNotification">
+            <summary>
+            You are still on spam timeout, message cannot be sent.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ChatAntiSpam_SameMessageNotification">
+            <summary>
+            You tried sending the same message within a short amount of time. Message not sent.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ChatAntiSpam_SpamMessageNotification">
+            <summary>
+            You have been put on timeout for spamming. Message not sent.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeDuctCurved">
+            <summary>
+            Reinforced Curved Conveyor Tube
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeDuctSmallCurved">
+            <summary>
+            Small Reinforced Curved Conveyor Tube
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeDuctSmallT">
+            <summary>
+            Small Reinforced Conveyor Tube T Junction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorTubeDuctT">
+            <summary>
+            Reinforced Conveyor Tube T Junction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.RadialMenuGroupTitle_Hitech">
+            <summary>
+            Hi-tech
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_BasicMissionBlock">
+            <summary>
+            AI Basic (Task)
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_BasicMissionBlock">
+            <summary>
+            Type: Task  This can be used for basic, customizable AI tasks. It can follow a player, follow and wander around a home position, or perform autopilot functions.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_FlightMovementBlock">
+            <summary>
+            Type: Move  This controls the movement of an AI grid, using available thrusters and gyros. Used in conjunction with other AI type blocks, it will attempt to move the grid to waypoints provided by other AI blocks.  An active Move type block is required to make an AI grid move.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_FlightMovementBlock">
+            <summary>
+            AI Flight (Move)
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_DefensiveCombatBlock">
+            <summary>
+            Type: Combat  This can detect and target lock enemy grids up to 2500m. Additionally, it can be set up to flee to a predetermined location when it has detected an enemy.  When enemies are detected, this block takes priority over any active Task type blocks.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_DefensiveCombatBlock">
+            <summary>
+            AI Defensive (Combat)
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_OffensiveCombatBlock">
+            <summary>
+            Type: Combat  This can detect, target lock, and engage enemy grids up to 2500m using customizable attack patterns.  When enemies are detected, this block takes priority over any active Task type blocks.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_OffensiveCombatBlock">
+            <summary>
+            AI Offensive (Combat)
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Terminal_ActivateBehavior">
+            <summary>
+            AI Behavior
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_PathRecorderBlock">
+            <summary>
+            AI Recorder (Task)
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_PathRecorderBlock">
+            <summary>
+            Type: Task  This can record a path and action sequence. This path can be relative to another grid if the reference is set. This path and sequence can then be replayed, provided there is a Move type block available on the grid.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_Repeat">
+            <summary>
+            Repeat
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_RecordInterval">
+            <summary>
+            Record interval
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_Waypoints">
+            <summary>
+            Waypoints
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_Record">
+            <summary>
+            Record
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_Stop">
+            <summary>
+            Stop
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_ShowPath">
+            <summary>
+            Show path on HUD
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_Waypoint">
+            <summary>
+            Waypoint
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_Action">
+            <summary>
+            Action
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_ClearWaypointSelection">
+            <summary>
+            Clear selection
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_HideWaypoints">
+            <summary>
+            Hide waypoints
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_DeleteSelected">
+            <summary>
+            Delete selected
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_DeleteAllWaypoints">
+            <summary>
+            Delete all waypoints
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_MinimalDistance">
+            <summary>
+            Minimal distance
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_MinimalDistanceBetweenPoints">
+            <summary>
+            A waypoint is added when the distance to the last waypoint is greater than this value, and the time since the previous waypoint exceeds the Waypoint Addition Interval value.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_SetupAction">
+            <summary>
+            Setup action
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveBlock_SetupActions">
+            <summary>
+            Setup actions
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveBlock_SetupActions_Tooltip">
+            <summary>
+            The first slot triggers when fleeing, the second slot triggers when it stops fleeing.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_ShowSelectedPoints">
+            <summary>
+            Show selected points
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_ReversePathOrder">
+            <summary>
+            Reverse order
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_ReferenceBeacon">
+            <summary>
+            Reference Beacon
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_AddWaypoint">
+            <summary>
+            Add Waypoint
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_Play">
+            <summary>
+            Play
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionBlock_SelectMission">
+            <summary>
+            Select Objective
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionBlock_SelectMission_Tooltip">
+            <summary>
+            Follow Home - Allows you to select a home beacon or GPS that the grid should follow. Can be set up to wander while it is within range.  Follow Player - The grid will follow the player who presses the “Follow Me” button.  Autopilot - Allows the grid to move to GPS locations and patrol/circle between several locations. Patrol and Circle requires 2 GPS locations!
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMission_FollowHome">
+            <summary>
+            Follow Home
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMission_FollowPlayer">
+            <summary>
+            Follow Player
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMission_Autopilot">
+            <summary>
+            Autopilot
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowPlayer_FollowMe_Title">
+            <summary>
+            Follow Me
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LeadIndicator_OutOfWeaponRange">
+            <summary>
+            Out of weapon range
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowPlayer_StopFollowing_Title">
+            <summary>
+            Stop Following
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderBlock_FarAwayBeacon">
+            <summary>
+            Faraway beacon
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowPlayer_FollowDistance_Title">
+            <summary>
+            Follow Distance
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowPlayer_FollowDistance_Tooltip">
+            <summary>
+            The grid will try to stay within this distance of the player it is following.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowHome_PositionList">
+            <summary>
+            Home List
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowHome_PositionList_Tooltip">
+            <summary>
+            Available home positions.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowHome_SetHome_Title">
+            <summary>
+            Set Current Position
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowHome_SetHome_Tooltip">
+            <summary>
+            Creates a GPS at the current location and selects it as the home position.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowHome_MinRange_Title">
+            <summary>
+            Min. Range from Home
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowHome_MinRange_Tooltip">
+            <summary>
+            Set the min range away from the home position. The grid will stay between min and max range.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowHome_MaxRange_Title">
+            <summary>
+            Max. Range from Home
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowHome_MaxRange_Tooltip">
+            <summary>
+            Set the max range away from the home position. The grid will stay between min and max range.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowHome_Wander_Title">
+            <summary>
+            Wander when idle
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowHome_Wander_Tooltip">
+            <summary>
+            If set, the grid will wander to random positions within the min and max range from home.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_AvailableEvents">
+            <summary>
+            Event
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_Threshold_Title">
+            <summary>
+            Threshold
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_Threshold_Tooltip">
+            <summary>
+            Threshold
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_SelectActions_Title">
+            <summary>
+            Select Actions
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_SelectActions_Tooltip">
+            <summary>
+            Select Actions
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_AvailableBlocks_Title">
+            <summary>
+            Available Blocks
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_AvailableBlocks_Tooltip">
+            <summary>
+            Available Blocks
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_AddBlocks_Title">
+            <summary>
+            Add Blocks
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_AddBlocks_Tooltip">
+            <summary>
+            Add Blocks
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_SelectedBlocks_Title">
+            <summary>
+            Selected Blocks
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_SelectedBlocks_Tooltip">
+            <summary>
+            Selected Blocks
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_RemoveBlocks_Title">
+            <summary>
+            Remove Blocks
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_RemoveBlocks_Tooltip">
+            <summary>
+            Remove Blocks
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_AgregateEvent_Title">
+            <summary>
+            AND Gate
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_AgregateEvent_Tooltip">
+            <summary>
+            The first action is triggered if each block meets the condition. Else, the second action is triggered.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventBlockIntegrity">
+            <summary>
+            Block Integrity %
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_DefendAgainst">
+            <summary>
+            Defend Against
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_DefendAgainst_Tooltip">
+            <summary>
+            Which other grids may be a threat?
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_TargetLock">
+            <summary>
+            Target lock
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_TargetLock_Enemies">
+            <summary>
+            Enemies
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_TargetLock_EnemiesAndNeutrals">
+            <summary>
+            Enemies and neutrals
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_TargetLock_Nobody">
+            <summary>
+            Nobody
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_SubsystemsToDestroy">
+            <summary>
+            Subsystems to destroy
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_FleeTo">
+            <summary>
+            Flee to
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_FleeTo_Tooltip">
+            <summary>
+            If this grid flees, it will flee towards the selected waypoint.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_FleeTrigger">
+            <summary>
+            Flee trigger
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_FleeTrigger_Tooltip">
+            <summary>
+            When to flee? Never - This grid never flees. Always - This grid flees when it detects another grid within 2500m and  the "defend against" and "With Subsystem" conditions are met. When being Target Locked - When another grid that meets  the "Defend against" and "With Subsystem" conditions locks this grid. When taking damage - When taking damage from any source while a grid that meets  the "Defend against" and "With Subsystem" is within 2500m.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_FleeTrigger_Never">
+            <summary>
+            Never
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_FleeTrigger_Always">
+            <summary>
+            Always
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_FleeTrigger_WhenTargetLocked">
+            <summary>
+            When target locked
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_FleeTrigger_WhenTakingDamage">
+            <summary>
+            When taking damage
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_FleeTrigger_FleeTo">
+            <summary>
+            Flee to
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_WaypointSize">
+            <summary>
+            Flee waypoint size
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_WaypointSize_Tooltip">
+            <summary>
+            The distance to the selected waypoint the grid should be to consider it to have been reached.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_WithSubsystem">
+            <summary>
+            With Subsystem
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_WithSubsystem_Tooltip">
+            <summary>
+            Will "Defend against" grids with this subsystem.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionAutopilot_Mode">
+            <summary>
+            Mode
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_ThreateningSubsystem">
+            <summary>
+            Threatening Subsystem
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_ThreateningSubsystemTooltip">
+            <summary>
+            This block will only consider grids with the selected subsystem(s) to be a threat
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventGasTankFilled">
+            <summary>
+            Gas Tank Filled %
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionAutopilot_Waypoints">
+            <summary>
+            Waypoints
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionAutopilot_GPS">
+            <summary>
+            GPS
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventStoredPower">
+            <summary>
+            Stored Power %
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_AttackMode">
+            <summary>
+            Attack
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_SetAttackModeFormat">
+            <summary>
+            Set Attack Mode: {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.AttackMode_EnemiesOnly">
+            <summary>
+            Enemies Only
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.AttackMode_EnemiesAndNeutrals">
+            <summary>
+            Enemies And Neutrals
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_TargetPriority">
+            <summary>
+            Target Priority
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_SetTargetPriorityFormat">
+            <summary>
+            Set Target Priority: {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.TargetPriority_Closest">
+            <summary>
+            Closest
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.TargetPriority_Largest">
+            <summary>
+            Largest
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.TargetPriority_Smallest">
+            <summary>
+            Smallest
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_AttackPattern">
+            <summary>
+            Attack Pattern
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.TargetPriority_CircleOrOrbit">
+            <summary>
+            Circle/Orbit
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.TargetPriority_StayAtRange">
+            <summary>
+            Stay at range
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.TargetPriority_HitAndRun">
+            <summary>
+            Hit and run
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.TargetPriority_Intercept">
+            <summary>
+            Intercept
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_SubsystemToDestroy">
+            <summary>
+            Subsystem to destroy
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatBlock_UpdateTargetInterval">
+            <summary>
+            Target Search Interval
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatBlock_UpdateTargetInterval_Tooltip">
+            <summary>
+            Determines how often this block checks and (possibly) changes targets. Warning: Setting this very low may result in erratic targeting behavior!
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_ActivateBehavior">
+            <summary>
+            Subsystem to destroy
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_AlignToGravity">
+            <summary>
+            Align to P-Gravity
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTitle_MinHeightAboveTerrain">
+            <summary>
+            Min. altitude
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatCircleOrbit_Front">
+            <summary>
+            Front
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatCircleOrbit_CircleDistance_Title">
+            <summary>
+            Circle Distance
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatCircleOrbit_CircleDistance_Tooltip">
+            <summary>
+            The distance the grid should circle around the target
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatCircleOrbit_CircleInPGravity_Title">
+            <summary>
+            Circle in P-Gravity
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatCircleOrbit_CircleInPGravity_Tooltip">
+            <summary>
+            If the engagement is taking place in P-gravity, the orbit will be around the gravity direction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_BreakOffDistance_Title">
+            <summary>
+            Break-off distance
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_BreakOffDistance_Tooltip">
+            <summary>
+            At this distance to the target, this grid should retreat
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_RetreatDistance_Title">
+            <summary>
+            Retreat distance
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_RetreatDistance_Tooltip">
+            <summary>
+            The distance from the target to retreat to, before starting a new attack run
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_RetreatTimeout_Title">
+            <summary>
+            Retreat timeout
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_RetreatTimeout_Tooltip">
+            <summary>
+            The time this grid should take to attempt to reach its retreat distance. If it runs out of time, a new attack run will start regardless of distance from the target.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_RetreatAngle_Title">
+            <summary>
+            Retreat angle
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_RetreatAngle_Tooltip">
+            <summary>
+            The angle of the retreat vector relative to the attack run.  A value of 180 means the grid will retreat back in the same direction it started the attack run from. A value of 0 means the retreat will continue in a straight line from the attack run.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_PassOverTarget_Title">
+            <summary>
+            Pass over target
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_PassOverTarget_Tooltip">
+            <summary>
+            If the retreat angle is greater than 90° and the engagement is taking place in P-gravity, this will set the retreat waypoint to the far side over the target
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_AddWeapon_Title">
+            <summary>
+            Add Weapon
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_AddWeapon_Tooltip">
+            <summary>
+            Add the selected weapon to the Selected Weapons list
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_RemoveWeapon_Title">
+            <summary>
+            Remove Weapon
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_RemoveWeapon_Tooltip">
+            <summary>
+            Remove the selected weapon from the Selected Weapons list
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_AvailiableWeapons_Title">
+            <summary>
+            Availiable Weapons
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_SelectedWeapons_Title">
+            <summary>
+            Selected Weapons
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventPistonPosition">
+            <summary>
+            Piston Position %
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatHitAndRun_PatternName">
+            <summary>
+            Hit And Run
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatCircleOrbit_PatternName">
+            <summary>
+            Circle/Orbit
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatStayAtRange_PatternName">
+            <summary>
+            Stay At Range
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatStayAtRange_MinimalDistance_Title">
+            <summary>
+            Minimal Distance
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatStayAtRange_MinimalDistance_Tooltip">
+            <summary>
+            The minimal distance the grid should (try to) stay from the target
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatStayAtRange_MaximalDistance_Title">
+            <summary>
+            Maximal Distance
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatStayAtRange_MaximalDistance_Tooltip">
+            <summary>
+            The maximal distance the grid should (try to) stay from the target
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatStayAtRange_FacingPriority_Tooltip">
+            <summary>
+            The grid will attempt to keep the selected side(s) facing towards the target
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatIntercept_PatternName">
+            <summary>
+            Intercept
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatIntercept_GuidanceType_Title">
+            <summary>
+            Guidance Type
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatIntercept_OverrideCollisionAvoidance_Title">
+            <summary>
+            Override Collision Avoidance
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatIntercept_OverrideCollisionAvoidance_Tooltip">
+            <summary>
+            If checked, the collision avoidance of the Move type block will be ignored
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatIntercept_GuidanceBasic">
+            <summary>
+            Basic
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatIntercept_GuidanceTargetPrediction">
+            <summary>
+            Target Prediction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatIntercept_GuidanceProportionalNavigation">
+            <summary>
+            Proportional Navigation
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_BoolTriggerState_Title">
+            <summary>
+            Target Prediction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventConnectorConnected">
+            <summary>
+            Connector Connected
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventLandingGearLocked">
+            <summary>
+            Landing Gear Locked
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventCockpitOccupied">
+            <summary>
+            Cockpit Occupied
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventRotorHingeAttachedDetached">
+            <summary>
+            Rotor/Hinge Attached/Detached
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_MyEventBlockOnOff">
+            <summary>
+            Block On/Off Switched
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorCap">
+            <summary>
+            Conveyor Cap
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_ConveyorCapMedium">
+            <summary>
+            Conveyor Cap Medium
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_PipeCap">
+            <summary>
+            Conveyor Pipe Cap
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventDoorOpened">
+            <summary>
+            Door Opened
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfBed">
+            <summary>
+            Half Bed
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_HalfBedOffset">
+            <summary>
+            Half Bed Offset
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AngledInteriorWallA">
+            <summary>
+            Angled Interior Wall A
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AngledInteriorWallB">
+            <summary>
+            Angled Interior Wall B
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventBlockAddedRemoved">
+            <summary>
+            Block Added/Removed
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_InsetLight">
+            <summary>
+            Inset Light
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventPowerOutput">
+            <summary>
+            Power Output %
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventAngleChanged">
+            <summary>
+            Angle Changed
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventSurfaceHeight">
+            <summary>
+            Altitude
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_Height_Title">
+            <summary>
+            Altitude
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Terminal_ActivateBehavior_Tooltip">
+            <summary>
+            Sets this block as the active block of its type. Deactivates all other blocks of the same type
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_PipeWorkBlockA">
+            <summary>
+            Pipeworks A
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_PipeWorkBlockB">
+            <summary>
+            Pipeworks B
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_AccessPanel">
+            <summary>
+            Access Panels decorative blocks that hide the internal electrical systems of structures and ships.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AccessPanel1">
+            <summary>
+            Access Panel 1
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AccessPanel2">
+            <summary>
+            Access Panel 2
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AccessPanel3">
+            <summary>
+            Access Panel 3
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AccessPanel4">
+            <summary>
+            Access Panel 4
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AirVentFan">
+            <summary>
+            Air Vent Fan
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AirVentFanFull">
+            <summary>
+            Air Vent Fan Full
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_CameraReskin">
+            <summary>
+            Top Mounted Camera
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_DLC_AIUpdateDLC">
+            <summary>
+            Automatons
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_Play">
+            <summary>
+            Start/stop playing the recorded path.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_Repeat">
+            <summary>
+            Repeat the path.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_ClearWaypoints">
+            <summary>
+            Deselect all waypoints.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_DeleteAllWaypoints">
+            <summary>
+            Delete all waypoints.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_DeleteSelectedWaypoints">
+            <summary>
+            Delete selected waypoints.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_SetupActionForSelectedWaypoint">
+            <summary>
+            Setup action for selected waypoint.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_ReversePath">
+            <summary>
+            Reverse order of all waypoints.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_ShowPath">
+            <summary>
+            Displays the recorded path on the HUD.  To see this, ensure you have “Show on HUD” enabled on this block, as well as “Show AI Functions” in the Info screen, and have an Antenna connection to this grid.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_ShowPoints">
+            <summary>
+            Displays the selected point(s) on the HUD.  To see this, ensure you have “Show on HUD” enabled on this block, as well as “Show AI Functions” in the Info screen, and have an Antenna connection to this grid.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_RecordPath">
+            <summary>
+            Start recording a new path. Recording adds to the end of any existing record. A path cannot be recorded while the Autopilot is enabled.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_RecordsSteps">
+            <summary>
+            A waypoint is added when the time since the last waypoint is greater than this value, and the distance to the previous waypoint exceeds the Minimal Distance value.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_RecordsDistance">
+            <summary>
+            A waypoint is added when the distance to the last waypoint is greater than this value, and the time since the previous waypoint exceeds the Waypoint Addition Interval value.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_Beacons">
+            <summary>
+            When a reference is selected, the waypoints are in local space coordinates relative to the reference. If none is selected, the waypoints are relative to the world space coordinates.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_DeselectBeacons">
+            <summary>
+            Deselect reference beacon.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PathRecorder_AddWaypoint">
+            <summary>
+            Manually add a waypoint at the current position.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_CollisionAvoidance">
+            <summary>
+            Enabling this will make the grid avoid voxels and other grids.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_PresisionMode">
+            <summary>
+            Precision Mode ensures the grid will reach the exact waypoint location. Additionally, it forces the grid to fully rotate towards the next waypoint before it can accelerate.  NOTE: This greatly slows down the autopilot’s movement and is only recommended to be used in cases where precise movement is required (e.g., a docking sequence).
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_RemoteBlockSpeedLimit">
+            <summary>
+            The maximum speed the grid is allowed to move.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_AlignToGravity">
+            <summary>
+            If checked, the grid will at all times attempt to keep itself aligned to P-Gravity.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BlockPropertyTooltip_MinHeightAboveTerrain">
+            <summary>
+            Set the minimum altitude the grid should keep when in P-Gravity.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowPlayer_FollowMe_Tooltip">
+            <summary>
+            This will make the grid attempt to follow you.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowPlayer_StopFollowing_Tooltip">
+            <summary>
+            Stop following the player.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionAutopilot_Waypoints_Tooltip">
+            <summary>
+            List of waypoints for autopilot to move to.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionAutopilot_SetupAction_Tooltip">
+            <summary>
+            Add actions to be triggered at the selected waypoint.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionAutopilot_DeleteWaypoint_Tooltip">
+            <summary>
+            Delete selected waypoint.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionAutopilot_Up_Tooltip">
+            <summary>
+            Move selected waypoint up.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionAutopilot_Down_Tooltip">
+            <summary>
+            Move selected waypoint down.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionAutopilot_Add_Tooltip">
+            <summary>
+            Add selected GPS location as new waypoint.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionAutopilot_GpsListbox_Tooltip">
+            <summary>
+            List of available GPS coordinates.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionAutopilot_Copy_Tooltip">
+            <summary>
+            Copy the listed waypoints to the clipboard.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionAutopilot_Paste_Tooltip">
+            <summary>
+            Paste waypoints from the clipboard to the waypoint list.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_SensorReskin">
+            <summary>
+            Automaton Sensor
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_SignBlocks">
+            <summary>
+            Warning Signs can be used to attend crew to the dangers of their environment.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign1">
+            <summary>
+            Warning Sign Trade
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign10">
+            <summary>
+            Warning Sign Construction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign11">
+            <summary>
+            Warning Sign Gravity
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign12">
+            <summary>
+            Warning Sign Airlock
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign13">
+            <summary>
+            Warning Sign Hazard
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign2">
+            <summary>
+            Warning Sign Access
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign3">
+            <summary>
+            Warning Sign Safety
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign4">
+            <summary>
+            Warning Sign Storage
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign5">
+            <summary>
+            Warning Sign Explosive
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign6">
+            <summary>
+            Warning Sign Notice
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign7">
+            <summary>
+            Warning Sign Medical
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign8">
+            <summary>
+            Warning Sign Caution
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_WarningSign9">
+            <summary>
+            Warning Sign Atmosphere
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.AI_NoMovementBlock">
+            <summary>
+            [Color=#FFFF0000]ERROR: Grid has no active Move type block! Please add and/or enable a Move type block.[/Color]
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_NoFleeTo">
+            <summary>
+            [Color=#FFFF0000]ERROR: No "Flee to" waypoint selected! Please select a waypoint[/Color]
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderComponent_StatusMessage_NoWaypoints">
+            <summary>
+            [Color=#FFFF0000]ERROR: No sequence found! Please record a sequence[/Color]
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderComponent_StatusMessage_BehaviorDisabled">
+            <summary>
+            Status: Behavior disabled
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderComponent_StatusMessage_PlayingPathNextWaypoint">
+            <summary>
+            Status: Moving to Recorder index: {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.AiBlock_StatusMessage_BlockDisabled">
+            <summary>
+            Status: Block disabled
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.CombatBlock_StatusMessage_AiOff">
+            <summary>
+            Status: Behavior disabled
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.CombatBlock_StatusMessage_BlockOff">
+            <summary>
+            Status: Block disabled
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.CombatBlock_Tooltip_Circle">
+            <summary>
+            The grid will try to circle or orbit the enemy at a customizable distance
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.CombatBlock_Tooltip_StayAtRange">
+            <summary>
+            The grid will try to keep the enemy between a customizable min/max distance.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.CombatBlock_Tooltip_HitRun">
+            <summary>
+            The grid will continuously make an attack run on the target, and break off to retreat when it gets close.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.CombatBlock_Tooltip_Intercept">
+            <summary>
+            The grid will attempt to intercept the enemy and ram it.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightBlock_StatusMessage_NoTaskBlock">
+            <summary>
+            [Color=#FFFF0000]ERROR: No movement input. Please add/activate a Task and/or Combat block![/Color]
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.AIBlocks_HudMessage_Error">
+            <summary>
+            ERROR
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Terminal_ShowAiWaypointOnHud">
+            <summary>
+             - Waypoint
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightBlock_StatusMessage_Idle">
+            <summary>
+            Status: Idle
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightBlock_StatusMessage_MaintainingMinimalHeight">
+            <summary>
+            Status: Maintaining minimal altitude: {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.CombatBlock_StatusMessage_Searching">
+            <summary>
+            Status: Searching for enemies... {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.CombatBlock_StatusMessage_TargetLocking">
+            <summary>
+            Status: Target locking {0}. {1} remaining.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatBlock_StatusMessage_TargetLocked">
+            <summary>
+            Status: Target locked {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_StatusMessage_Fleeing">
+            <summary>
+            Status: Fleeing from {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightBlock_StatusMessage_Fleeing">
+            <summary>
+            Status: Fleeing from {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatBlock_StatusMessage_Attacking">
+            <summary>
+            Status: Attacking {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowHome_StatusMessage_Wandering">
+            <summary>
+            Status: Wandering around {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightBlock_HitRun_StatusMessage_Retreating">
+            <summary>
+            Status: Retreating from {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightBlock_PathRecorder_StatusMessage_MovingToWaypoint">
+            <summary>
+            Status: Moving to Recorder waypoint {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightBlock_HitRun_StatusMessage_Attacking">
+            <summary>
+            Status: Attacking {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightBlock_StayAtRange_StatusMessage_Keeping">
+            <summary>
+            Status: Stay at range from {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightBlock_Circle_StatusMessage_Circling">
+            <summary>
+            Status: Circling {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightBlock_Intercept_StatusMessage_Intercepting">
+            <summary>
+            Status: Intercepting {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderComponent_StatusMessage_Idle">
+            <summary>
+            Status: Idle
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderComponent_StatusMessage_Recording">
+            <summary>
+            Status: Recording
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightMovementBlock_NoGyro">
+            <summary>
+            [Color=#FFFF0000]ERROR: Grid cannot rotate, please add a gyroscope![/Color]
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightMovementBlock_NoThrustInAllDirections">
+            <summary>
+            [Color=#FFFF0000]ERROR: Grid cannot move in one or more directions, please ensure a thruster is available for each direction![/Color]
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_Condition">
+            <summary>
+            Condition
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_Condition_Tooltip">
+            <summary>
+            Sets under what condition the actions trigger.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_Condition_Higher">
+            <summary>
+            Equal or greater than
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_Condition_Lower">
+            <summary>
+            Equal or less than
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_AirDucts">
+            <summary>
+            Willis Ducts can be used to crawl through and enter restricted spaces.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AirDuct1">
+            <summary>
+            Willis Duct
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AirDuct2">
+            <summary>
+            Willis Duct 2
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AirDuctCorner">
+            <summary>
+            Willis Duct Corner
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AirDuctGrate">
+            <summary>
+            Willis Duct Grate
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AirDuctLight">
+            <summary>
+            Willis Duct Light
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AirDuctRamp">
+            <summary>
+            Willis Duct Ramp
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AirDuctT">
+            <summary>
+            Willis Duct T Junction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_AirDuctX">
+            <summary>
+            Willis Duct X Junction
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_OffroadSuspension2x2">
+            <summary>
+            Offroad Wheel Suspension 2x2 Right
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_OffroadSuspension2x2Mirrored">
+            <summary>
+            Offroad Wheel Suspension 2x2 Left
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_OffroadWheel2x2">
+            <summary>
+            Offroad Wheel 2x2
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_Suspension2x2">
+            <summary>
+            Wheel Suspension 2x2 Right
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_Suspension2x2Mirrored">
+            <summary>
+            Wheel Suspension 2x2 Left
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_Wheel2x2">
+            <summary>
+            Wheel 2x2
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Programmable_BlockReskin">
+            <summary>
+            Automaton Programmable Block
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventActionInfo">
+            <summary>
+            Output: Action slot {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventBlockInputInfo">
+            <summary>
+            Input: {0} at {1} {2}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventConditionInfo">
+            <summary>
+            Condition: {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.StoreBuy_Error_Caption_StoreNotOwnedByFaction">
+            <summary>
+            Transaction Failed
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.StoreBuy_Error_StoreNotOwnedByFaction">
+            <summary>
+            Store not owned by faction.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.StoreSell_Error_Caption_NoFaction">
+            <summary>
+            Transaction Failed
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.StoreSell_Error_Text_NoFaction">
+            <summary>
+            Store not owned by faction.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventOutputInfo">
+            <summary>
+            Output: Action Slot {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventState_CockpitOccupied">
+            <summary>
+            Occupied
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventState_CockpitUnoccupied">
+            <summary>
+            Unoccupied
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventState_ConnectorConnected">
+            <summary>
+            Connected
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventState_ConnectorDisconnected">
+            <summary>
+            Disconnected
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventState_DoorClosed">
+            <summary>
+            Closed
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventState_DoorOpened">
+            <summary>
+            Opened
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventState_LandingGearLocked">
+            <summary>
+            Locked
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventState_LandingGearUnlocked">
+            <summary>
+            Unlocked
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventBoolBlockInputInfo">
+            <summary>
+            Input: {0} is {1}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventInfo">
+            <summary>
+            Event: {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventAddedRemoveInputInfo">
+            <summary>
+            Input: Block was {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventBlockValueAdded">
+            <summary>
+            added
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventBlockValueRemoved">
+            <summary>
+            removed
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.ActiveContractsScreen_Help_Abandon">
+            <summary>
+            {CONTROL:GUI:BUTTON_A} Abandon
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatStayAtRange_EvasiveManeuvers_Title">
+            <summary>
+            Evasive Maneuvers
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatStayAtRange_EvasiveManeuvers_Tooltip">
+            <summary>
+            To evade enemy fire, the grid will move to random positions when it is within min and max distance
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventInputInfo">
+            <summary>
+            Input: {0} {1}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Plural_Seconds">
+            <summary>
+            seconds
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowHome_HomeNotSet">
+            <summary>
+            [Color=#FFFF0000]ERROR: Home not set, please select a home position![/Color]
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FollowPlayer_Following">
+            <summary>
+            Status: Following {0}.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Autopilot_MovingToGPS">
+            <summary>
+            Status: Moving to GPS {0}.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventAboveEqualInfo">
+            <summary>
+            Condition: &gt;=
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventBellowEqualInfo">
+            <summary>
+            Condition: &lt;=
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventThresholdInfo">
+            <summary>
+            Threshold: {0} {1}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_AccesPanel">
+            <summary>
+            Access Panels allow access for emergency or maintenance and make flat surfaces look more detailed.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_LockTarget">
+            <summary>
+            Lock Target
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_LockTarget_Tooltip">
+            <summary>
+            Target lock grids that meet the above conditions
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatBlock_Status_Nominal">
+            <summary>
+            NOMINAL: {0} used as aiming reference
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatBlock_Status_ErrorNotFacingForward">
+            <summary>
+            [Color=#FFFF0000]ERROR: {0} not facing in the forwards direction, this weapon will not be used![/Color]
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatBlock_Status_WarningMultipleAmmo">
+            <summary>
+            [Color=#FFFFBB00]WARNING: Multiple ammo types detected, accuracy may be reduced[/Color]
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatBlock_FacingPriority_Title">
+            <summary>
+            Facing Priority
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_TimerBlockReskin">
+            <summary>
+            Automaton Timer Block
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_SpeederCockpit">
+            <summary>
+            Saddle Cockpit
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_SpeederCockpit">
+            <summary>
+            The Saddle Cockpit can be used to pilot anything from modest rovers to small-scale ships.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_GridAutomation">
+            <summary>
+            Grid Automation
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_SpeederCockpitCompact">
+            <summary>
+            Saddle Cockpit Compact
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_EmotionController">
+            <summary>
+            The Emotion Controller displays emoticons and can copy those to other assigned LCD panels and screens. 
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EmotionController">
+            <summary>
+            Emotion Controller
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EmotionControll_UsableLCDs">
+            <summary>
+            Available LCDs
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Angry">
+            <summary>
+            Angry
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Annoyed">
+            <summary>
+            Annoyed
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Confused">
+            <summary>
+            Confused
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Crying">
+            <summary>
+            Crying
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Evil">
+            <summary>
+            Evil
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Dead">
+            <summary>
+            Dead
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Happy">
+            <summary>
+            Happy
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Love">
+            <summary>
+            Love
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Neutral">
+            <summary>
+            Neutral
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Sad">
+            <summary>
+            Sad
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Shocked">
+            <summary>
+            Shocked
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Skeptical">
+            <summary>
+            Skeptical
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Sleepy">
+            <summary>
+            Sleepy
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Suspicious_Left">
+            <summary>
+            Suspicious Left
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Suspicious_Right">
+            <summary>
+            Suspicious Right
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.LCD_Emote_Wink">
+            <summary>
+            Wink
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EmotionBlock_Currently_Selected_Emotion">
+            <summary>
+            Currently selected emotion : 
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_DLC_Automatons">
+            <summary>
+            Automatons
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_DLC_Automatons">
+            <summary>
+            Automatons
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Autopilot_Collision_Avoidance_Error">
+            <summary>
+            [Color=#FFFF0000]ERROR: Destination cannot be reached. Collision avoidance prevents this grid from moving inside the bounding box of a static grid. Move this grid and/or the destination outside any static grid’s bounding box or disable collision avoidance.[/Color]
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.PathRecorderComponent_StatusMessage_BlockDisabled">
+            <summary>
+            Status: Block disabled
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_HitAndRun_CustomWaypoint">
+            <summary>
+            Custom Waypoint
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightMovementBlock_MaxPitchAngle">
+            <summary>
+            Max Pitch Angle
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightMovementBlock_MaxPitchAngle_Tooltip">
+            <summary>
+            When moving to a waypoint in P-Gravity, the grid may pitch up or down by this angle
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightMovementBlock_MaxRollAngle">
+            <summary>
+            Max Roll Angle
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.FlightMovementBlock_MaxRollAngle_Tooltip">
+            <summary>
+            When moving to a waypoint in P-Gravity, the grid may roll left or right by this angle
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveDefensiveCombatBlock_TargetLocking_TimeLeft">
+            <summary>
+            Status: Target locking {0}. {1}s remaining.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveDefensiveCombatBlock_TargetLocked">
+            <summary>
+            Status: Target locked {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatBlock_CharacterLocked">
+            <summary>
+            Attacking {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_CharacterLocked">
+            <summary>
+            Status: Defending against {0}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveDefensiveCombatBlock_CanTargetCharacters">
+            <summary>
+            Target Characters
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatBlock_FacingMode">
+            <summary>
+            Facing mode
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.OffensiveCombatBlock_FacingMode_Tooltip">
+            <summary>
+            Use static weapons or manually set what side(s) should face the enemy
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DefensiveCombatBlock_SavedGps">
+            <summary>
+            (Saved) 
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.BasicMissionBlock_SavedGps">
+            <summary>
+            (Saved) 
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Assembler_ItemsInQueue">
+            <summary>
+            Items in queue: {0}/{1}
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventState_Merged">
+            <summary>
+            Merged
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventState_NotMerged">
+            <summary>
+            Not Merged
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventMerged">
+            <summary>
+            Merge Block Merged
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventGridSpeedChanged">
+            <summary>
+            Grid Speed Changed
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventThrustPercentage">
+            <summary>
+            Thrust %
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventState_EventThrustPercentage">
+            <summary>
+            Thrust: 
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_SpeedThreshold_Title">
+            <summary>
+            Speed Threshold
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_SpeedThreshold_Tooltip">
+            <summary>
+            Speed Threshold
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_AngleThreshold_Title">
+            <summary>
+            Angle Threshold
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.EventControllerBlock_AngleThreshold_Tooltip">
+            <summary>
+            Angle Threshold
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventMagneticLockReady">
+            <summary>
+            Magnetic Lock Ready
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventMagneticLockReady_Ready">
+            <summary>
+            ready to lock
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventMagneticLockReady_NotReady">
+            <summary>
+            not ready to lock
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventConnectorReadyToLock">
+            <summary>
+            Connector Ready to Lock
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventConnectorLockReady_Ready">
+            <summary>
+            ready to lock.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventConnectorLockReady_NotReady">
+            <summary>
+            not ready to lock.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventNaturalGravityChanged">
+            <summary>
+            Natural Gravity Changed
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventNaturalGravity">
+            <summary>
+            Natural gravity:
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.CombatBlock_OffensivePatternsTooltip">
+            <summary>
+            Determines how the grid will attack the enemy. Circle/Orbit - The grid will try to circle or orbit the enemy at a customizable distance. Stay at Range - The grid will try to keep the enemy between a customizable min/max distance. Hit and Run - The grid will continuously make an attack run on the target, and break off to retreat when it gets close. Intercept - The grid will attempt to intercept the enemy and ram it.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.Description_SabiroidPlushie">
+            <summary>
+            An advanced motivational device of pristine quality.  Can not be crafted or disassembled.
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_Block_SabiroidPlushie">
+            <summary>
+            Saberoid Plushie
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventDistanceToLockedTarget">
+            <summary>
+            Distance to Locked Target
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventDistanceToLockedTargetChanged">
+            <summary>
+            Distance to Locked Target
+            </summary>
+        </member>
+        <member name="F:Sandbox.Game.Localization.MySpaceTexts.DisplayName_EventDistanceToLockedTarget_NotLocked">
+            <summary>
+            (not locked)
             </summary>
         </member>
         <member name="M:Sandbox.Game.MyCampaignManager.Init">
@@ -36361,38 +39021,6 @@
             <summary>
             Responsible for synchronizing entity physics over network
             </summary>
-        </member>
-        <member name="F:Sandbox.Game.Replication.StateGroups.MyEntityInventoryStateGroup.m_messagePartsProcessed">
-            <summary>
-            Collection of all message parts that has arrived and were processed.
-            </summary>
-        </member>
-        <member name="F:Sandbox.Game.Replication.StateGroups.MyEntityInventoryStateGroup.m_messagePartsBlocked">
-            <summary>
-            Collection of message parts that have been processed or must not be processed (either their parent or descendant arrived).
-            </summary>
-        </member>
-        <member name="M:Sandbox.Game.Replication.StateGroups.MyEntityInventoryStateGroup.IsMessageFinishedRecursive(System.Byte,System.Byte)">
-            <summary>
-            Search recursively for children. If both children arrived, set higher level to cache it.
-            </summary>
-            <param name="id"></param>
-            <param name="lastId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Sandbox.Game.Replication.StateGroups.MyEntityInventoryStateGroup.AddMessagePartBlock(System.Byte)">
-            <summary>
-            Add subId to blocked and block all it's parents (if message was processed, parents mut not be, as they overlap)
-            </summary>
-            <param name="id"></param>
-        </member>
-        <member name="M:Sandbox.Game.Replication.StateGroups.MyEntityInventoryStateGroup.CanProcessMessagePart(System.Byte)">
-            <summary>
-            Decide whether message with subid can be processed. 
-            SubId must not be processed if it is blocked (that means that a child subId was already added) or any parent was added (would overlap with this)
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
         </member>
         <member name="T:Sandbox.Game.Replication.StateGroups.MyEntityPhysicsStateGroup">
             <summary>
@@ -37023,56 +39651,6 @@
             should be linked to this class.
             </summary>
         </member>
-        <member name="T:Sandbox.Common.MyRenderDebugInputComponent">
-            <summary>
-            This debug component can be used to remember debug draws methods, aabbs or matrices to be drawn, even if the event occurs just once
-            and data can not be retrieved to render them in next frames.
-            </summary>
-        </member>
-        <member name="F:Sandbox.Common.MyRenderDebugInputComponent.CheckedObjects">
-            <summary>
-            This list can be used to track down specific objects during runtime debug step -> CheckedObjects.Add(this), and change then this later to -> if (CheckedObjects.Contain(this)) Debugger.Break();
-            </summary>
-        </member>
-        <member name="E:Sandbox.Common.MyRenderDebugInputComponent.OnDraw">
-            <summary>
-            Subscribe to this event debug draw callbacks for specific objects to be draw independetly
-            </summary>
-        </member>
-        <member name="F:Sandbox.Common.MyRenderDebugInputComponent.AABBsToDraw">
-            <summary>
-            Add your AABB and Color to draw it every update when this component is enabled
-            </summary>
-        </member>
-        <member name="F:Sandbox.Common.MyRenderDebugInputComponent.MatricesToDraw">
-            <summary>
-            Add your matrix to be draw every update if this component is enabled
-            </summary>
-        </member>
-        <member name="M:Sandbox.Common.MyRenderDebugInputComponent.Clear">
-            <summary>
-            Clears the lists.
-            </summary>
-        </member>
-        <member name="M:Sandbox.Common.MyRenderDebugInputComponent.AddMatrix(VRageMath.Matrix,VRageMath.Color)">
-            <summary>
-            Add matrix to be drawn as axes with OBB
-            </summary>
-            <param name="mat">World matrix</param>
-            <param name="col">Color</param>
-        </member>
-        <member name="M:Sandbox.Common.MyRenderDebugInputComponent.AddAABB(VRageMath.BoundingBoxD,VRageMath.Color)">
-            <summary>
-            Add AABB box to be drawn
-            </summary>
-            <param name="aabb">AABB box in world coords</param>
-            <param name="col">Color</param>
-        </member>
-        <member name="M:Sandbox.Common.MyRenderDebugInputComponent.BreakIfChecked(System.Object)">
-            <summary>
-            This will break the debugger, if passed object was added to MyRenderDebugInputComponent.CheckedObjects. Use for breaking in the code when you need to break at specific object.
-            </summary>        
-        </member>
         <member name="T:Sandbox.MyCommonProgramStartup">
             <summary>
             Serves as the main wrapper class that will be used for the program initialization.
@@ -37170,8 +39748,13 @@
             <summary>
             Invokes the specified action on main thread.
             </summary>
+            <param name="invokerName">For debug purpose</param>
+            <param name="context">Object that would be passed in action</param>
+            <param name="action">Action that should be invoked</param>
+            <param name="startAtFrame">When <see cref="P:Sandbox.Game.World.MySession.GameplayFrameCounter"/> more than this argument, action is invoked, use -1 for call in next frame </param>
+            <param name="repeatTimes">How many times should be action repeated</param>
         </member>
-        <member name="M:Sandbox.MySandboxGame.ProcessInvoke">
+        <member name="M:Sandbox.MySandboxGame.ProcessInvoke(System.Boolean)">
             <summary>
             Processes the invoke queue.
             </summary>

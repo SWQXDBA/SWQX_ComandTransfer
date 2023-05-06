@@ -1722,6 +1722,11 @@
             Defines an axis-aligned box-shaped 3D volume.
             </summary>
         </member>
+        <member name="F:VRageMath.BoundingBoxD.NUMBER_OF_CORNERS">
+            <summary>
+            Number of corners of the BB
+            </summary>
+        </member>
         <member name="F:VRageMath.BoundingBoxD.Min">
             <summary>
             The minimum point the BoundingBox contains.
@@ -1775,6 +1780,13 @@
             
             </summary>
             <param name="center"></param>
+        </member>
+        <member name="M:VRageMath.BoundingBoxD.GetCorner(System.Int32)">
+            <summary>
+            Gets corner of the BB by index
+            </summary>
+            <param name="index">index of the corner</param>
+            <returns>corner position</returns>
         </member>
         <member name="M:VRageMath.BoundingBoxD.GetCorners">
             <summary>
@@ -7256,9 +7268,16 @@
         </member>
         <member name="M:VRageMath.MyOrientedBoundingBoxD.#ctor(VRageMath.MatrixD)">
             <summary>
-            Initializes a new instance of the MyOrientedBoundingBox.
+            Initializes a new instance of the MyOrientedBoundingBoxD.
             Scale of matrix is size of box
             </summary>
+        </member>
+        <member name="M:VRageMath.MyOrientedBoundingBoxD.GetCorner(System.Int32)">
+            <summary>
+            Gets corner of the BB by index
+            </summary>
+            <param name="index">index of the corner</param>
+            <returns>corner position</returns>
         </member>
         <member name="T:VRageMath.PackedVector.Byte4">
             <summary>
@@ -10576,6 +10595,12 @@
             </summary>
             returns length
         </member>
+        <member name="M:VRageMath.Vector3.Normalized">
+            <summary>
+            Creates a unit vector from the specified vector. The result is a vector one unit in length pointing in the same direction as the original vector.
+            </summary>
+            <returns>Normalized vector</returns>
+        </member>
         <member name="M:VRageMath.Vector3.Normalize(VRageMath.Vector3)">
             <summary>
             Creates a unit vector from the specified vector. The result is a vector one unit in length pointing in the same direction as the original vector.
@@ -10703,6 +10728,18 @@
             Restricts a value to be within a specified range.
             </summary>
             <param name="value1">The value to clamp.</param><param name="min">The minimum value.</param><param name="max">The maximum value.</param>
+        </member>
+        <member name="M:VRageMath.Vector3.Clamp(VRageMath.Vector3,VRageMath.Vector3,VRageMath.Vector3,VRageMath.Vector3@,VRageMath.Vector3@,VRageMath.Vector3@)">
+            <summary>
+            Restricts a value to be within a specified range.
+            </summary>
+            <param name="value1">The value to clamp.</param>
+            <param name="min">The minimum value.</param>
+            <param name="max">The maximum value.</param>
+            <param name="clampedBy">Value was clamped by this amount</param>
+            <param name="minRemaining">Remaining min tolerance</param>
+            <param name="maxRemaining">Remaining max tolerance</param>
+            <returns></returns>
         </member>
         <member name="M:VRageMath.Vector3.Clamp(VRageMath.Vector3@,VRageMath.Vector3@,VRageMath.Vector3@,VRageMath.Vector3@)">
             <summary>
@@ -10965,6 +11002,14 @@
             </summary>
             <param name="value1">Source vector.</param><param name="value2">The divisor.</param><param name="result">[OutAttribute] The result of the division.</param>
         </member>
+        <member name="M:VRageMath.Vector3.Angle(VRageMath.Vector3,VRageMath.Vector3)">
+            <summary>
+            Gets angle between 2 vectors in radians
+            </summary>
+            <param name="a">Vector A</param>
+            <param name="b">Vector B</param>
+            <returns>Angle in radians</returns>
+        </member>
         <member name="M:VRageMath.Vector3.ProjectOnPlane(VRageMath.Vector3@,VRageMath.Vector3@)">
             <summary>
             Projects given vector on plane specified by it's normal.
@@ -11190,6 +11235,12 @@
             Turns the current vector into a unit vector. The result is a vector one unit in length pointing in the same direction as the original vector.
             </summary>
             returns length
+        </member>
+        <member name="M:VRageMath.Vector3D.Normalized">
+            <summary>
+            Creates a unit vector from the specified vector. The result is a vector one unit in length pointing in the same direction as the original vector.
+            </summary>
+            <returns>Normalized vector</returns>
         </member>
         <member name="M:VRageMath.Vector3D.Normalize(VRageMath.Vector3D)">
             <summary>
@@ -11443,6 +11494,12 @@
             </summary>
             <param name="value">The Vector3 to rotate.</param><param name="rotation">The Quaternion rotation to apply.</param>
         </member>
+        <member name="M:VRageMath.Vector3D.Transform(VRageMath.Vector3D,VRageMath.QuaternionD)">
+            <summary>
+            Transforms a Vector3 by a specified Quaternion rotation.
+            </summary>
+            <param name="value">The Vector3 to rotate.</param><param name="rotation">The Quaternion rotation to apply.</param>
+        </member>
         <member name="M:VRageMath.Vector3D.Transform(VRageMath.Vector3D@,VRageMath.Quaternion@,VRageMath.Vector3D@)">
             <summary>
             Transforms a Vector3 by a specified Quaternion rotation.
@@ -11584,6 +11641,14 @@
             Divides a vector by a scalar value.
             </summary>
             <param name="value1">Source vector.</param><param name="value2">The divisor.</param><param name="result">[OutAttribute] The result of the division.</param>
+        </member>
+        <member name="M:VRageMath.Vector3D.Angle(VRageMath.Vector3D,VRageMath.Vector3D)">
+            <summary>
+            Gets angle between 2 vectors in radians
+            </summary>
+            <param name="a">Vector A</param>
+            <param name="b">Vector B</param>
+            <returns>Angle in radians</returns>
         </member>
         <member name="M:VRageMath.Vector3D.ProjectOnPlane(VRageMath.Vector3D@,VRageMath.Vector3D@)">
             <summary>

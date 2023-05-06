@@ -496,13 +496,13 @@
         <Reference Include="TelerikCommon, Version=2020.2.616.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e">
           <HintPath>..\GameBinaries\TelerikCommon.dll</HintPath>
         </Reference>
-        <Reference Include="Torch, Version=1.3.1.200, Culture=neutral, PublicKeyToken=null">
+        <Reference Include="Torch">
           <HintPath>..\TorchBinaries\Torch.dll</HintPath>
         </Reference>
-        <Reference Include="Torch.API, Version=1.3.1.200, Culture=neutral, PublicKeyToken=null">
+        <Reference Include="Torch.API">
           <HintPath>..\TorchBinaries\Torch.API.dll</HintPath>
         </Reference>
-        <Reference Include="Torch.Server, Version=1.3.1.172, Culture=neutral, PublicKeyToken=null">
+        <Reference Include="Torch.Server">
           <HintPath>..\TorchBinaries\Torch.Server.exe</HintPath>
         </Reference>
         <Reference Include="VRage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">

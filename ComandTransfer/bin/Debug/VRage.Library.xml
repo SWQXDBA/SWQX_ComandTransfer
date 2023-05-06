@@ -317,6 +317,11 @@
             Etc...
             </summary>
         </member>
+        <member name="T:VRage.Library.Collections.DictionaryWrapper`2">
+            <summary>
+            Used for not forget about subscribed blocks
+            </summary>
+        </member>
         <member name="T:VRage.Library.Collections.DynamicSerializerDelegate">
             <summary>
             Dynamic object serializer, when writing, serializes object type.
@@ -2669,6 +2674,16 @@
             This may not be accurate for large values - double accuracy
             </summary>
         </member>
+        <member name="M:VRage.Library.Utils.PathUtils.GetFilesRecursively(System.String,System.String)">
+            <summary>
+            Gets Files Recursively from specified path with specified search pattern. 
+            Method gives access only to sub-folders of User Data Path or Mods Path.
+            </summary>
+            <param name="path">relative path to Mods or User Data Path</param>
+            <param name="searchPattern">search pattern</param>
+            <returns>array of names of the files</returns>
+            <exception cref="T:System.Security.SecurityException">Thrown when path is outside of scope</exception>
+        </member>
         <member name="T:VRage.Collections.CachingDictionary`2">
             <summary>
             Dictionary wrapper that allows for addition and removal even during enumeration.
@@ -2781,6 +2796,33 @@
             <summary>
             Basic copy-on-commit implementation, later it will be faster by using one queue with 2 tails
             </summary>
+        </member>
+        <member name="T:VRage.Collections.MyDistributedTypeUpdater`1">
+            <summary>
+            Class distributing updates on large amount of objects in configurable intervals.
+            This updater does updates in linear manner in defined steps. Also takes into account type of the item.
+            </summary>
+        </member>
+        <member name="M:VRage.Collections.MyDistributedTypeUpdater`1.System#Collections#Generic#IEnumerable{T}#GetEnumerator">
+            <inheritdoc />
+        </member>
+        <member name="M:VRage.Collections.MyDistributedTypeUpdater`1.System#Collections#IEnumerable#GetEnumerator">
+            <inheritdoc />
+        </member>
+        <member name="M:VRage.Collections.MyDistributedTypeUpdater`1.Enumerator.MoveNext">
+            <inheritdoc />
+        </member>
+        <member name="M:VRage.Collections.MyDistributedTypeUpdater`1.Enumerator.Reset">
+            <inheritdoc />
+        </member>
+        <member name="P:VRage.Collections.MyDistributedTypeUpdater`1.Enumerator.Current">
+            <inheritdoc />
+        </member>
+        <member name="P:VRage.Collections.MyDistributedTypeUpdater`1.Enumerator.System#Collections#IEnumerator#Current">
+            <inheritdoc />
+        </member>
+        <member name="M:VRage.Collections.MyDistributedTypeUpdater`1.Enumerator.Dispose">
+            <inheritdoc />
         </member>
         <member name="T:VRage.Collections.MyDistributedUpdater`2">
             <summary>
@@ -2907,6 +2949,25 @@
             <summary>
             Gets allocation free enumerator (returns struct)
             </summary>
+        </member>
+        <member name="T:VRage.Collections.TypeSortedCachingList`1">
+            <summary>
+            List wrapper that allows for addition and removal even during enumeration.
+            Done by caching changes and allowing explicit application using Apply* methods.
+            </summary>
+        </member>
+        <member name="M:VRage.Collections.TypeSortedCachingList`1.RemoveAtImmediately(System.Int32)">
+            <summary>
+            Immediately removes an element at the specified index.
+            </summary>
+            <param name="index">Index of the element to remove immediately.</param>
+        </member>
+        <member name="M:VRage.Collections.TypeSortedCachingList`1.CopyWithChanges">
+            <summary>
+            Create a copy of the internal list with changes applied.
+            </summary>
+            <remarks>This method does not modify the collection</remarks>
+            <returns>A copy of the list with all changes applied.</returns>
         </member>
         <member name="T:VRage.InstanceComparer`1">
             <summary>
@@ -3456,6 +3517,12 @@
             Node is removed from group
             </summary>
         </member>
+        <member name="M:VRage.Groups.IGroupData`1.OnChangeComplete">
+            <summary>
+            When connectivity changed.
+            CubeGrid.GetConnectedGrids working correctly here
+            </summary>
+        </member>
         <member name="T:VRage.Groups.MyGroups`2.MajorGroupComparer">
             <summary>
             Return true when "major" is really major group, otherwise false.
@@ -3538,6 +3605,20 @@
             </summary>
             <param name="nodeInGroup"></param>
             <returns></returns>
+        </member>
+        <member name="M:VRage.Groups.MyGroupsBase`1.GetGroupNodes(`0,System.Collections.Generic.List{`0})">
+            <summary>
+            Gets connected nodes
+            </summary>
+            <param name="nodeInGroup">Test node</param>
+            <param name="result">Target array, that would get results</param>
+        </member>
+        <member name="M:VRage.Groups.MyGroupsBase`1.GetGroupNodes(`0,System.Action{`0})">
+            <summary>
+            Gets connected nodes
+            </summary>
+            <param name="nodeInGroup">Test node</param>
+            <param name="action">Would be called for each node</param>
         </member>
         <member name="M:VRage.Groups.MyGroupsBase`1.HasSameGroup(`0,`0)">
             <summary>

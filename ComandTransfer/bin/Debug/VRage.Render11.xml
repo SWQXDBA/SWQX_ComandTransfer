@@ -363,7 +363,7 @@
             Do not use these timers for anything affecting rendered stuff. Use MyCommon.FrameTime instead.
             </summary>
         </member>
-        <member name="M:VRageRender.MyRenderFont.DrawString(VRage.Render11.Sprites.MySpritesRenderer,VRageMath.Vector2,VRageMath.Color,System.String,System.Single,System.Boolean,System.Single)">
+        <member name="M:VRageRender.MyRenderFont.DrawString(VRage.Render11.Sprites.MySpritesRenderer,VRageMath.Vector2D,VRageMath.Color,System.String,System.Double,System.Boolean,System.Double)">
             <summary>
             Draw the given string at vOrigin using the specified color
             </summary>

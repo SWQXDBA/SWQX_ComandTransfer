@@ -111,6 +111,12 @@
             <param name="musicEffect"></param>
             <returns>effect output sound</returns>
         </member>
+        <member name="M:VRage.Audio.IMyAudio.GetCurrentlyPlayedSounds">
+            <summary>
+            Gets currently played sounds of the game. Used for AI Testing tool. Do not used in the game.
+            </summary>
+            <returns>played sounds</returns>
+        </member>
         <member name="P:VRage.Audio.MyNullAudio.CacheLoaded">
             <inheritdoc />
         </member>
@@ -1345,9 +1351,54 @@
             Enumeration describing Enabled state of multiple objects.
             </summary>
         </member>
+        <member name="F:VRage.MyMultipleEnabledEnum.NoObjects">
+            <summary>
+            No blocks with on/off state
+            </summary>
+        </member>
+        <member name="F:VRage.MyMultipleEnabledEnum.AllDisabled">
+            <summary>
+            All blocks has off state
+            </summary>
+        </member>
+        <member name="F:VRage.MyMultipleEnabledEnum.Mixed">
+            <summary>
+            Blocks has on and off state
+            </summary>
+        </member>
+        <member name="F:VRage.MyMultipleEnabledEnum.AllEnabled">
+            <summary>
+            All blocks has on state
+            </summary>
+        </member>
         <member name="T:VRage.MyResourceStateEnum">
             <summary>
             Enumeration describing Enabled state of multiple objects.
+            </summary>
+        </member>
+        <member name="F:VRage.MyResourceStateEnum.Ok">
+            <summary>
+            Working fine. Every block has enough power
+            </summary>
+        </member>
+        <member name="F:VRage.MyResourceStateEnum.OverloadAdaptible">
+            <summary>
+            Some adaptible group does not have enough resources, but everything else still works fine
+            </summary>
+        </member>
+        <member name="F:VRage.MyResourceStateEnum.OverloadBlackout">
+            <summary>
+            Some non-adaptible group does not have enough resources, so it is without power
+            </summary>
+        </member>
+        <member name="F:VRage.MyResourceStateEnum.NoPower">
+            <summary>
+            No power
+            </summary>
+        </member>
+        <member name="F:VRage.MyResourceStateEnum.Disconnected">
+            <summary>
+            Used only for internal use.
             </summary>
         </member>
         <member name="T:VRage.Noise.Models.MyCylinder">
@@ -1658,6 +1709,11 @@
             When used together with Server attribute, server validates data, invokes the method on server and then sends it to all clients except the client who invoked it on server.
             </summary>
         </member>
+        <member name="T:VRage.Network.BroadcastTerminalInfoAttribute">
+            <summary>
+            Called on all clients with opened terminal panel with specific block. Used for updating detailed info.
+            </summary>
+        </member>
         <member name="T:VRage.Network.ClientAttribute">
             <summary>
             Client method. Decorated method is be called by server on client.
@@ -1707,6 +1763,12 @@
             <summary>
             Is this still valid, i.e it should still be used and replicated.
             </summary>
+        </member>
+        <member name="M:VRage.Network.IMyNetObject.GetUniqueId">
+            <summary>
+            Gets uniqued id of this net object. 
+            </summary>
+            <returns>Unique id</returns>
         </member>
         <member name="P:VRage.Network.IMyProxyTarget.Target">
             <summary>
@@ -1899,6 +1961,11 @@
         <member name="P:VRage.Network.MyClientStateBase.EndpointId">
             <summary>
             Client endpoint, don't serialize it in Serialize()
+            </summary>
+        </member>
+        <member name="P:VRage.Network.MyClientStateBase.SelectedBlockEntityId">
+            <summary>
+            Gets or sets selected block entity id in the terminal panel by the client
             </summary>
         </member>
         <member name="M:VRage.Network.MyClientStateBase.Serialize(VRage.Library.Collections.BitStream,System.Boolean)">
@@ -2105,6 +2172,31 @@
             <summary>
             Server method. Decorated method is be called by client on server or by server locally.
             Server performs validation. Pass null as validation method to perform no validation (not recommended)
+            </summary>
+        </member>
+        <member name="F:VRage.Network.ValidationType.Access">
+            <summary>
+            Access validation checks the distance from entity and if you are able to access it. Works only on entities with replicable.
+            </summary>
+        </member>
+        <member name="F:VRage.Network.ValidationType.Ownership">
+            <summary>
+            Ownership validation checks if you have rights to use that entity (ownership, faction share, share all). Works only on entities with replicable.
+            </summary>
+        </member>
+        <member name="F:VRage.Network.ValidationType.AdminOnly">
+            <summary>
+            Administrator only static RPC access validation
+            </summary>
+        </member>
+        <member name="F:VRage.Network.ValidationType.SpaceMasterOnly">
+            <summary>
+            Space Master only static RPC access validation
+            </summary>
+        </member>
+        <member name="F:VRage.Network.ValidationType.CreativeRights">
+            <summary>
+            Creative Right static RPC access validation. Creative mode or user is space master or above.
             </summary>
         </member>
         <member name="T:VRage.Network.ServerInvokedAttribute">
@@ -3188,6 +3280,31 @@
             Set the global variant to be selected for each translation.
             </summary>
             <param name="variantName"></param>
+        </member>
+        <member name="F:VRage.Voxels.MyStorageDataTypeFlags.None">
+            <summary>
+            None
+            </summary>
+        </member>
+        <member name="F:VRage.Voxels.MyStorageDataTypeFlags.Content">
+            <summary>
+            Read voxel filled ratio
+            </summary>
+        </member>
+        <member name="F:VRage.Voxels.MyStorageDataTypeFlags.Material">
+            <summary>
+            Read voxel materials
+            </summary>
+        </member>
+        <member name="F:VRage.Voxels.MyStorageDataTypeFlags.ContentAndMaterial">
+            <summary>
+            Read voxel materials and voxel filled ratio
+            </summary>
+        </member>
+        <member name="F:VRage.Voxels.MyStorageDataTypeFlags.All">
+            <summary>
+            Read all content
+            </summary>
         </member>
         <member name="T:VRage.Voxels.MyVoxelRequestFlags">
              <summary>

@@ -66,9 +66,8 @@
             <TextBlock Height="25" FontSize="25">
                 Command Transfer Plugin
             </TextBlock>
-            <TextBlock >
-                updated at 2022-12-27:   
-                all commands of this plugin have removed.Please use UI.
+            <TextBlock Margin="0,20,0,0">
+                Updated at 2022-12-27: All commands of this plugin have removed.Please use UI.
             </TextBlock>
             <TextBlock Height="25" FontSize="25">
             </TextBlock>
@@ -78,8 +77,8 @@
             <!--<TextBox Text="{Binding MotdUrl}"/>-->
             <DataGrid Width="600" AutoGenerateColumns="False" CanUserAddRows="True"  ItemsSource="{Binding convertors, UpdateSourceTrigger=PropertyChanged}" >
                 <DataGrid.Columns >
-                    <DataGridTextColumn Binding="{Binding From}" Header="sourceCommand"/>
-                    <DataGridTextColumn Binding="{Binding To}" Header="targetCommand"/>
+                    <DataGridTextColumn Width="1*" Binding="{Binding From}" Header="sourceCommand"/>
+                    <DataGridTextColumn Width="1*" Binding="{Binding To}" Header="targetCommand"/>
                 </DataGrid.Columns>
             </DataGrid>
             
